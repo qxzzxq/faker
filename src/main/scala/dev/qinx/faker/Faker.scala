@@ -77,9 +77,25 @@ class Faker[T : ClassTag](val local: Local) extends HasSeed with Logging {
       val paramType = param.getType
       val provider = providers.getOrElse(param.getName, throw new NoSuchElementException(s"Cannot find provider of type ${param.getType}"))
 
-      val fakeData = provider.provide()
+      if (log.isTraceEnabled()) {
+        log.trace(s"Generate fake data for ${param.getName}")
+      }
 
-      if (paramType.isAssignableFrom(fakeData.getClass)) {
+      val fakeData = provider.provide()
+      val fakeDataCls: Class[_] = fakeData.getClass
+      val paramCls: Class[_] = paramType.getName match {
+        case "float" => classOf[java.lang.Float]
+        case "double" => classOf[java.lang.Double]
+        case "int" => classOf[java.lang.Integer]
+        case "long" => classOf[java.lang.Long]
+        case "short" => classOf[java.lang.Short]
+        case "boolean" => classOf[java.lang.Boolean]
+        case "char" => classOf[java.lang.Character]
+        case "byte" => classOf[java.lang.Byte]
+        case _ => paramType
+      }
+
+      if (paramCls.isAssignableFrom(fakeDataCls)) {
         fakeData.asInstanceOf[Object]
       } else {
         if (paramType.equals(classOf[String]) && classOf[HasString].isAssignableFrom(provider.getClass)) {
