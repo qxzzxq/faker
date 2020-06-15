@@ -1,9 +1,12 @@
 package dev.qinx.faker.provider
 
-class StringProvider extends Provider[String] {
+import java.lang.annotation.Annotation
 
-  override def provide(): String = ???
+import dev.qinx.faker.internal.{HasRandom, Logging}
 
+class StringProvider extends Provider[String] with HasRandom with Logging {
 
+  override def provide(): String = random.alphanumeric.take(10).mkString
 
+  override def configure(annotation: Annotation): this.type = this
 }

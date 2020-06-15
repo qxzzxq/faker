@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface Date {
-    String format() default "yyyy-MM-dd";
+    String format() default "";
     Class<? extends CanProvide> provider() default dev.qinx.faker.provider.LocalDateProvider.class;
 }
