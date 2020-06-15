@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 public @interface Date {
     String format() default "yyyy-MM-dd";
-    Class<? extends CanProvide> provider() default dev.qinx.faker.provider.Date.class;
+    Class<? extends CanProvide> provider() default dev.qinx.faker.provider.LocalDateProvider.class;
 }

@@ -6,6 +6,4 @@ trait CanProvide {
 
   def provide(): T
 
-  def seed(seed: Long): this.type
-
 }
