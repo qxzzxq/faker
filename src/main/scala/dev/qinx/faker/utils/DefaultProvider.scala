@@ -2,12 +2,12 @@ package dev.qinx.faker.utils
 
 import java.time.LocalDate
 
-import dev.qinx.faker.internal.CanProvide
 import dev.qinx.faker.provider._
 
 object DefaultProvider {
 
-  def of(obj: Class[_]): CanProvide = {
+  @throws[NoSuchElementException]
+  def of(obj: Class[_]): Provider[_] = {
     if (obj.equals(classOf[LocalDate])) return new datetime.LocalDateProvider()
     if (obj.equals(classOf[String])) return new StringProvider()
     if (obj.equals(classOf[Float])) return new FloatProvider()

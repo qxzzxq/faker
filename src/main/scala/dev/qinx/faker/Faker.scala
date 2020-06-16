@@ -11,45 +11,80 @@ import dev.qinx.faker.utils.{DefaultProvider, ReflectUtils}
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
-class Faker[T : ClassTag](val local: Local) extends HasSeed with Logging {
+class Faker[T: ClassTag](val local: Local) extends HasSeed with Logging {
 
   def this() = this(Local.en)
 
   private[this] val classTag = implicitly[ClassTag[T]]
 
+  /**
+   * The primary constructor of the class T
+   */
   private[this] val primaryConstructor: Constructor[T] = {
     val constructor = classTag.runtimeClass.getDeclaredConstructors.head
     constructor.setAccessible(true)
     constructor.asInstanceOf[Constructor[T]]
   }
 
+  /**
+   * The list of provider for each parameter of the primary constructor.
+   */
   private[this] lazy val providers: mutable.LinkedHashMap[String, CanProvide] = this.getProviders
 
+  /**
+   * Get an object of type T with faked data
+   * @return an object of type T
+   */
   def get(): T = primaryConstructor.newInstance(getInitArgs: _*)
 
+  /**
+   * Get a sequence of object T with faked data
+   * @param length length of the output sequence
+   * @return a seq of object T
+   */
   def get(length: Long): Seq[T] = (1L to length).map(_ => get())
 
+  /**
+   * For a given annotation,
+   * @param annotation
+   * @throws
+   * @return
+   */
   @throws[NoSuchMethodException]
-  private[this] def getProvider(annotation: Annotation): CanProvide = {
+  private[this] def getProviderFromAnnotation(annotation: Annotation): CanProvide = {
     val provider = ReflectUtils
-      .invokeMethod[Class[CanProvide]](annotation.annotationType(), "provider", annotation)
+      .invokeAnnotationMethod[Class[CanProvide]](annotation, "provider")
       .newInstance()
       .configure(annotation)
-
-    this.seed match {
-      case Some(seed) => if (classOf[HasSeed].isAssignableFrom(provider.getClass)) {
-        provider.asInstanceOf[HasSeed].setSeed(seed)
-      }
-      case _ =>
-    }
     provider
   }
 
+  /**
+   * If a seed is set in Faker, then try to set the seed for the given provider if it has seed
+   * @param provider provider that we want to set seed to
+   */
+  private[this] def setSeedOfProvider(provider: CanProvide): Unit = {
+    this.seed match {
+      case Some(seed) =>
+        if (classOf[HasSeed].isAssignableFrom(provider.getClass)) {
+          if (log.isTraceEnabled()) log.trace(s"${provider.getClass.getCanonicalName} has seed")
+          provider.asInstanceOf[HasSeed].setSeed(seed)
+        }
+      case _ =>
+    }
+  }
+
+  /**
+   * Get the data providers for each parameter of the primary constructor
+   * @return a Map of parameter name to its data provider
+   */
+  @throws[NoSuchElementException]("No provider could be found")
+  @throws[NoSuchMethodException]
   private[this] def getProviders: mutable.LinkedHashMap[String, CanProvide] = {
 
     this.seed match {
-      case Some(seed) => log.debug(s"Set seed to $seed")
-      case _ => log.debug("No seed is set")
+      case Some(seed) => log.info(s"Set seed to $seed")
+      case _ =>
     }
 
     val providers = new mutable.LinkedHashMap[String, CanProvide]()
@@ -62,16 +97,24 @@ class Faker[T : ClassTag](val local: Local) extends HasSeed with Logging {
       annotation match {
         case Some(anno) =>
           log.debug(s"Set ${anno.annotationType().getSimpleName} provider for the field ${p.getName}: ${p.getType.getCanonicalName}")
-          providers.put(p.getName, getProvider(anno))
+          val provider = getProviderFromAnnotation(anno)
+          setSeedOfProvider(provider)
+          providers.put(p.getName, provider)
         case _ =>
           log.debug(s"Set default provider for the field ${p.getName}: ${p.getType.getCanonicalName}")
-          providers.put(p.getName, DefaultProvider.of(p.getType))
+          val defaultProvider = DefaultProvider.of(p.getType)
+          setSeedOfProvider(defaultProvider)
+          providers.put(p.getName, defaultProvider)
       }
     }
 
     providers
   }
 
+  /**
+   * Generate the initial arguments for the primary constructor of the type T
+   * @return an array of Object
+   */
   private[this] def getInitArgs: Array[Object] = {
     primaryConstructor.getParameters.map { param =>
       val paramType = param.getType
