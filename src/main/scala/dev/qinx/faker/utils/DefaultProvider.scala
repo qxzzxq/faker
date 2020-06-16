@@ -8,7 +8,7 @@ import dev.qinx.faker.provider._
 object DefaultProvider {
 
   def of(obj: Class[_]): CanProvide = {
-    if (obj.equals(classOf[LocalDate])) return new LocalDateProvider()
+    if (obj.equals(classOf[LocalDate])) return new datetime.LocalDateProvider()
     if (obj.equals(classOf[String])) return new StringProvider()
     if (obj.equals(classOf[Float])) return new FloatProvider()
     if (obj.equals(classOf[Double])) return new DoubleProvider()

@@ -1,5 +1,7 @@
 package dev.qinx.faker.utils
 
+import java.lang.annotation.Annotation
+
 import dev.qinx.faker.internal.Logging
 
 object ReflectUtils extends Logging {
@@ -27,6 +29,24 @@ object ReflectUtils extends Logging {
     }
     val method = cls.getDeclaredMethod(name)
     method.invoke(obj).asInstanceOf[T]
+  }
+
+  def getClassOf(cls: Class[_]): Class[_] = {
+    cls.getName match {
+      case "float" => classOf[java.lang.Float]
+      case "double" => classOf[java.lang.Double]
+      case "int" => classOf[java.lang.Integer]
+      case "long" => classOf[java.lang.Long]
+      case "short" => classOf[java.lang.Short]
+      case "boolean" => classOf[java.lang.Boolean]
+      case "char" => classOf[java.lang.Character]
+      case "byte" => classOf[java.lang.Byte]
+      case _ => cls
+    }
+  }
+
+  def invokeAnnotationMethod[T](anno: Annotation, name: String): T = {
+    invokeMethod[T](anno.annotationType(), name, anno)
   }
 
 }

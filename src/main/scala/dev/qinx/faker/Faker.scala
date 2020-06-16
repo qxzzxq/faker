@@ -13,7 +13,7 @@ import scala.reflect.ClassTag
 
 class Faker[T : ClassTag](val local: Local) extends HasSeed with Logging {
 
-  def this() = this(Local.en_US)
+  def this() = this(Local.en)
 
   private[this] val classTag = implicitly[ClassTag[T]]
 
@@ -83,17 +83,7 @@ class Faker[T : ClassTag](val local: Local) extends HasSeed with Logging {
 
       val fakeData = provider.provide()
       val fakeDataCls: Class[_] = fakeData.getClass
-      val paramCls: Class[_] = paramType.getName match {
-        case "float" => classOf[java.lang.Float]
-        case "double" => classOf[java.lang.Double]
-        case "int" => classOf[java.lang.Integer]
-        case "long" => classOf[java.lang.Long]
-        case "short" => classOf[java.lang.Short]
-        case "boolean" => classOf[java.lang.Boolean]
-        case "char" => classOf[java.lang.Character]
-        case "byte" => classOf[java.lang.Byte]
-        case _ => paramType
-      }
+      val paramCls: Class[_] = ReflectUtils.getClassOf(paramType)
 
       if (paramCls.isAssignableFrom(fakeDataCls)) {
         fakeData.asInstanceOf[Object]
@@ -121,7 +111,7 @@ object Faker {
 
   object implicits {
     implicit val localDateProvider: ImplicitProvider[LocalDate] = new ImplicitProvider[LocalDate] {
-      override def provide(): LocalDate = new dev.qinx.faker.provider.LocalDateProvider().provide()
+      override def provide(): LocalDate = new dev.qinx.faker.provider.datetime.LocalDateProvider().provide()
     }
   }
 }

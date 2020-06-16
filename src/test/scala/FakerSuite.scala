@@ -1,23 +1,30 @@
-import FakerSuite.TestClass
+import FakerSuite.{TestClass, TestName}
 import dev.qinx.faker.Faker
-import dev.qinx.faker.annotation.Date
+import dev.qinx.faker.annotation.datetime.Date
+import dev.qinx.faker.annotation.person.Name
 import org.scalatest.funsuite.AnyFunSuite
 
 class FakerSuite extends AnyFunSuite {
 
   test("Faker should generate fake data") {
-
     val faker = new Faker[TestClass]
-
     println(faker.get())
-
   }
 
+  test("name") {
+    val faker = new Faker[TestName]
+    faker.get(10).foreach(println)
+  }
 
 
 }
 
 object FakerSuite {
+
+  case class TestName(@Name name: String,
+                      @Date date: String,
+                      text: String,
+                      number: Int)
 
   case class TestClass(@Date date: String,
                        text: String,
@@ -28,8 +35,5 @@ object FakerSuite {
                        short: Short,
                        char: Char,
                        bool: Boolean,
-                       bytes: Array[Byte]) {
-
-
-  }
+                       bytes: Array[Byte])
 }
