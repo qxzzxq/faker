@@ -16,6 +16,12 @@ class FakerSuite extends AnyFunSuite {
     val faker = new Faker[TestName]
     faker.get(10).foreach(println)
   }
+
+  test("Method") {
+
+    println(Faker.name())
+    println(Faker.localDate())
+  }
 }
 
 object FakerSuite {

@@ -101,17 +101,13 @@ class Faker[T : ClassTag](val local: Local) extends HasSeed with Logging {
 
 object Faker {
 
-  def apply[T](implicit provider: ImplicitProvider[T]): T = {
-    provider.provide()
+  def localDate(): LocalDate = {
+    new dev.qinx.faker.provider.datetime.LocalDateProvider().provide()
   }
 
-  protected trait ImplicitProvider[T] {
-    def provide(): T
+  def name(local: Local = Local.en): String = {
+    dev.qinx.faker.provider.person.Name(local).provide()
   }
 
-  object implicits {
-    implicit val localDateProvider: ImplicitProvider[LocalDate] = new ImplicitProvider[LocalDate] {
-      override def provide(): LocalDate = new dev.qinx.faker.provider.datetime.LocalDateProvider().provide()
-    }
-  }
+
 }

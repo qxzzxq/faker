@@ -15,17 +15,22 @@ class LocalDateProvider() extends Provider[LD] with HasRandom with HasString wit
   private[this] val minDay: LD = LD.of(1970, 1, 1)
   private[this] val range: Long = ChronoUnit.DAYS.between(minDay, LD.now())
 
+  def setPattern(pattern: String): this.type = {
+    if (pattern != "") {
+      log.debug(s"Set date pattern to $pattern")
+      this.dateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
+    }
+    this
+  }
+
   override def provide(): LD = {
     minDay.plusDays(random.nextInt(range.toInt))
   }
 
   override def configure(annotation: Annotation): this.type = {
     val pattern = ReflectUtils.invokeAnnotationMethod[String](annotation, "format")
+    this.setPattern(pattern)
 
-    if (pattern != "") {
-      log.debug(s"Set date pattern to $pattern")
-      this.dateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
-    }
     this
   }
 

@@ -18,20 +18,24 @@ class Name extends Provider[String] with HasRandom with Logging {
 
   override def configure(annotation: Annotation): this.type = {
     val local = ReflectUtils.invokeAnnotationMethod[Local](annotation, "local")
+    this.provider = Name(local)
+    this.provider.configure(annotation)
+    this
+  }
+
+}
+
+object Name {
+
+  def apply(local: Local): LocalNameProvider = {
     val providerName = s"dev.qinx.faker.provider.person.${local.name()}.NameProvider"
 
-    log.debug(s"Found local: $local}")
-    log.debug(s"Provider name: $providerName}")
-
-    this.provider = Class
+    Class
       .forName(providerName)
       .getDeclaredConstructors
       .head
       .newInstance()
       .asInstanceOf[LocalNameProvider]
-
-    this.provider.configure(annotation)
-    this
   }
 
 }
