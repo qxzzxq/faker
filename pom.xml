@@ -8,29 +8,28 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>My Project</name>
-    <description>My wonderfull scala app</description>
-    <url>https://github.com/</url>
+    <name>faker</name>
+    <description>Generate fake data for Scala and Spark</description>
+    <url>https://github.com/qxzzxq/faker</url>
 
-    <!--======Uncomment if you need to deploy the project======-->
-    <!--<scm>-->
-    <!--    <connection></connection>-->
-    <!--    <developerConnection></developerConnection>-->
-    <!--    <url></url>-->
-    <!--</scm>-->
-    <!--<licenses>-->
-    <!--    <license>-->
-    <!--        <name>The Apache License, Version 2.0</name>-->
-    <!--        <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>-->
-    <!--    </license>-->
-    <!--</licenses>-->
-    <!--<developers>-->
-    <!--    <developer>-->
-    <!--        <id>id</id>-->
-    <!--        <name>YOUR NAME</name>-->
-    <!--        <email>EMAIL</email>-->
-    <!--    </developer>-->
-    <!--</developers>-->
+    <scm>
+        <connection>scm:git:git://github.com/qxzzxq/faker.git</connection>
+        <developerConnection>scm:git:ssh://github.com:qxzzxq/faker.git</developerConnection>
+        <url>https://github.com/qxzzxq/faker/tree/master</url>
+    </scm>
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>QXZ</id>
+            <name>Xuzhou Qin</name>
+            <email>me@qinx.dev</email>
+        </developer>
+    </developers>
 
     <repositories>
         <repository>

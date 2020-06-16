@@ -1,0 +1,31 @@
+name: build-release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Prepare
+        env:
+          MVN_SETTINGS: ${{ secrets.MVN_SETTINGS }}
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+        run: |
+          echo "$MVN_SETTINGS" | base64 -d > "$HOME"/.m2/settings.xml
+          echo "$GPG_KEY" | base64 -d | gpg --import --batch > /dev/null 2>&1
+
+      - name: Test
+        run: mvn -ntp -B clean:clean test
+
+      - name: Deploy
+        run: mvn -ntp -B clean deploy -DskipTests -Prelease
