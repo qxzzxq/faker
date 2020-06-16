@@ -21,7 +21,7 @@ private[person] abstract class LocalNameProvider extends Provider[String] with H
 
   protected lazy val firstNames: Array[String] = firstNamesFemale ++ firstNamesMale
 
-  private[this] def firstNameOf(names: Array[String]): Option[String] = {
+  protected def firstNameOf(names: Array[String]): Option[String] = {
     if (firstName) {
       randomElementFrom(names)
     } else {
@@ -29,7 +29,7 @@ private[person] abstract class LocalNameProvider extends Provider[String] with H
     }
   }
 
-  private[this] def lastNameOf: Option[String] = {
+  protected def lastNameOf: Option[String] = {
     if (lastName) {
       randomElementFrom(lastNames)
     } else {
