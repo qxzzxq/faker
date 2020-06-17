@@ -54,6 +54,7 @@ class Faker[T: ClassTag](val local: Local) extends HasSeed with Logging {
   private[this] def getProviderFromAnnotation(annotation: Annotation): CanProvide = {
     val provider = ReflectUtils
       .invokeAnnotationMethod[Class[CanProvide]](annotation, "provider")
+      .getDeclaredConstructor()
       .newInstance()
       .configure(annotation)
     provider

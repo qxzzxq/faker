@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dev.qinx</groupId>
-    <artifactId>faker</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>faker_2.12</artifactId>
+    <version>${revision}${changelist}</version>
     <packaging>jar</packaging>
 
     <name>faker</name>
@@ -43,6 +43,8 @@
     </repositories>
 
     <properties>
+        <revision>0.0.1</revision>
+        <changelist>-SNAPSHOT</changelist>
         <scala.version>2.12.10</scala.version>
         <scala.compat.version>2.12</scala.compat.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -103,11 +105,13 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>2.13.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>2.13.3</version>
+            <scope>provided</scope>
         </dependency>
 
         <!--======TYPESAFE CONFIG======-->

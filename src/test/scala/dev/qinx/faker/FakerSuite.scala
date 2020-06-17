@@ -27,6 +27,7 @@ class FakerSuite extends AnyFunSuite {
   test("Faker should generate name") {
     val faker = new Faker[TestName]
     faker.get(10).foreach { data =>
+      println(data)
       assert(data.date != null)
       assert(data.text != null)
       assert(!data.number.isNaN)
