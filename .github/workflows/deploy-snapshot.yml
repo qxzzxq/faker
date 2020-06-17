@@ -23,7 +23,13 @@ jobs:
           echo "$MVN_SETTINGS" | base64 -d > "$HOME"/.m2/settings.xml
 
       - name: Test
-        run: mvn -ntp -B clean:clean test
+        run: mvn -ntp -B clean:clean scoverage:report
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          flags: master
+          name: codecov-master-branch
 
       - name: Deploy
         run: mvn -ntp -B clean deploy -DskipTests -Psnapshot

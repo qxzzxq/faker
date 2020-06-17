@@ -18,4 +18,10 @@ jobs:
 
     - name: Run tests
       run: |
-        mvn -ntp -B clean:clean test
+        mvn -ntp -B clean:clean scoverage:report
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        flags: pr
+        name: codecov-pull-request
