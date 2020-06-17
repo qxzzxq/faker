@@ -1,8 +1,9 @@
-package dev.qinx.faker.provider
+package dev.qinx.faker.provider.fallback
 
 import java.lang.annotation.Annotation
 
 import dev.qinx.faker.internal.{HasRandom, Logging}
+import dev.qinx.faker.provider.Provider
 
 class LongProvider extends Provider[Long] with HasRandom with Logging  {
 

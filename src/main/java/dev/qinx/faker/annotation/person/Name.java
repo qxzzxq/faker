@@ -16,5 +16,5 @@ public @interface Name {
     Gender gender() default Gender.All;
     String firstName() default "true";
     String lastName() default "true";
-    Class<? extends CanProvide> provider() default dev.qinx.faker.provider.person.Name.class;
+    Class<? extends CanProvide> provider() default dev.qinx.faker.provider.person.NameProvider.class;
 }

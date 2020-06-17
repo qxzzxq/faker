@@ -150,7 +150,7 @@ object Faker {
   }
 
   def name(locale: Locale = Locale.en): String = {
-    dev.qinx.faker.provider.person.Name(locale).provide()
+    dev.qinx.faker.provider.person.NameProvider(locale).provide()
   }
 
 

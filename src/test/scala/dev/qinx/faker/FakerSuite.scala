@@ -1,6 +1,7 @@
 package dev.qinx.faker
 
 import dev.qinx.faker.FakerSuite.{TestClass, TestName}
+import dev.qinx.faker.annotation.base.IntegerType
 import dev.qinx.faker.annotation.datetime.Date
 import dev.qinx.faker.annotation.person.Name
 import dev.qinx.faker.enums.Locale
