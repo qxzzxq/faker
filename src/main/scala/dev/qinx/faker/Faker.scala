@@ -135,7 +135,7 @@ class Faker[T: ClassTag](val locale: Locale) extends HasSeed with Logging {
         if (paramType.equals(classOf[String]) && classOf[HasString].isAssignableFrom(provider.getClass)) {
           provider.asInstanceOf[HasString].provideString.asInstanceOf[Object]
         } else {
-          throw new NoSuchElementException(s"Cannot find provider of type ${param.getType}")
+          throw new NoSuchElementException(s"Cannot provide ${fakeDataCls.getSimpleName} to a field of type $paramType")
         }
       }
 

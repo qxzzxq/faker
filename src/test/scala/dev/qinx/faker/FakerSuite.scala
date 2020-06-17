@@ -1,7 +1,7 @@
 package dev.qinx.faker
 
 import dev.qinx.faker.FakerSuite.{TestClass, TestName}
-import dev.qinx.faker.annotation.base.IntegerType
+import dev.qinx.faker.annotation.base.IntType
 import dev.qinx.faker.annotation.datetime.Date
 import dev.qinx.faker.annotation.person.Name
 import dev.qinx.faker.enums.Locale
@@ -23,6 +23,8 @@ class FakerSuite extends AnyFunSuite {
     assert(data.char.isValidByte)
     assert(data.bool || !data.bool)
     assert(!data.bytes.isEmpty)
+
+    faker.get(10) foreach println
   }
 
   test("Faker should generate name") {

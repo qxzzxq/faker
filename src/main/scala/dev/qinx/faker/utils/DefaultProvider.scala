@@ -3,7 +3,8 @@ package dev.qinx.faker.utils
 import java.time.LocalDate
 
 import dev.qinx.faker.provider._
-import dev.qinx.faker.provider.fallback._
+import dev.qinx.faker.provider.base._
+
 object DefaultProvider {
 
   @throws[NoSuchElementException]

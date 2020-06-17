@@ -1,4 +1,4 @@
-package dev.qinx.faker.provider.fallback
+package dev.qinx.faker.provider.base
 
 import java.lang.annotation.Annotation
 
