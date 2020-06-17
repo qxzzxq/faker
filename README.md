@@ -1,5 +1,7 @@
 # faker
 
+![build](https://github.com/qxzzxq/faker/workflows/build/badge.svg) [![codecov](https://codecov.io/gh/qxzzxq/faker/branch/master/graph/badge.svg)](https://codecov.io/gh/qxzzxq/faker)
+
 Faker is a Scala library that can generate fake data.
 
 This project is inspired by the [Python package Faker](https://github.com/joke2k/faker).
