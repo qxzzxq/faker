@@ -1,6 +1,6 @@
 package dev.qinx.faker.enums;
 
-public enum Local {
+public enum Locale {
     en,
     fr_FR,
     zh_CN

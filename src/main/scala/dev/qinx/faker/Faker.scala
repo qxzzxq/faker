@@ -4,16 +4,16 @@ import java.lang.annotation.Annotation
 import java.lang.reflect.Constructor
 import java.time.LocalDate
 
-import dev.qinx.faker.enums.Local
+import dev.qinx.faker.enums.Locale
 import dev.qinx.faker.internal.{CanProvide, HasSeed, HasString, Logging}
 import dev.qinx.faker.utils.{DefaultProvider, ReflectUtils}
 
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
-class Faker[T: ClassTag](val local: Local) extends HasSeed with Logging {
+class Faker[T: ClassTag](val locale: Locale) extends HasSeed with Logging {
 
-  def this() = this(Local.en)
+  def this() = this(Locale.en)
 
   private[this] val classTag = implicitly[ClassTag[T]]
 
@@ -46,9 +46,9 @@ class Faker[T: ClassTag](val local: Local) extends HasSeed with Logging {
 
   /**
    * For a given annotation,
-   * @param annotation
-   * @throws
-   * @return
+   * @param annotation annotation that has the provider method
+   * @throws NoSuchMethodException cannot find the provider method in the annotation
+   * @return an object of type CanProvide
    */
   @throws[NoSuchMethodException]
   private[this] def getProviderFromAnnotation(annotation: Annotation): CanProvide = {
@@ -149,8 +149,8 @@ object Faker {
     new dev.qinx.faker.provider.datetime.LocalDateProvider().provide()
   }
 
-  def name(local: Local = Local.en): String = {
-    dev.qinx.faker.provider.person.Name(local).provide()
+  def name(locale: Locale = Locale.en): String = {
+    dev.qinx.faker.provider.person.Name(locale).provide()
   }
 
 

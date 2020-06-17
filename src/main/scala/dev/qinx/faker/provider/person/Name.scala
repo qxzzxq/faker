@@ -1,12 +1,9 @@
 package dev.qinx.faker.provider.person
 
 import java.lang.annotation.Annotation
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
-import dev.qinx.faker.enums.Local
-import dev.qinx.faker.internal.{HasRandom, HasString, Logging}
+import dev.qinx.faker.enums.Locale
+import dev.qinx.faker.internal.{HasRandom, Logging}
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.utils.ReflectUtils
 
@@ -22,8 +19,8 @@ class Name extends Provider[String] with HasRandom with Logging {
   }
 
   override def configure(annotation: Annotation): this.type = {
-    val local = ReflectUtils.invokeAnnotationMethod[Local](annotation, "local")
-    this.provider = Name(local)
+    val locale = ReflectUtils.invokeAnnotationMethod[Locale](annotation, "locale")
+    this.provider = Name(locale)
     this.provider.configure(annotation)
     this
   }
@@ -32,8 +29,8 @@ class Name extends Provider[String] with HasRandom with Logging {
 
 object Name {
 
-  def apply(local: Local): LocalNameProvider = {
-    val providerName = s"dev.qinx.faker.provider.person.${local.name()}.NameProvider"
+  def apply(locale: Locale): LocalNameProvider = {
+    val providerName = s"dev.qinx.faker.provider.person.${locale.name()}.NameProvider"
 
     Class
       .forName(providerName)

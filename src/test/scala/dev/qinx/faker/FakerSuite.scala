@@ -3,7 +3,7 @@ package dev.qinx.faker
 import dev.qinx.faker.FakerSuite.{TestClass, TestName}
 import dev.qinx.faker.annotation.datetime.Date
 import dev.qinx.faker.annotation.person.Name
-import dev.qinx.faker.enums.Local
+import dev.qinx.faker.enums.Locale
 import org.scalatest.funsuite.AnyFunSuite
 
 class FakerSuite extends AnyFunSuite {
@@ -56,7 +56,7 @@ class FakerSuite extends AnyFunSuite {
 
 object FakerSuite {
 
-  case class TestName(@Name(local = Local.zh_CN) chineseName: String,
+  case class TestName(@Name(locale = Locale.zh_CN) chineseName: String,
                       @Name englishName: String,
                       @Date date: String,
                       text: String,
