@@ -5,7 +5,7 @@ import java.lang.annotation.Annotation
 import dev.qinx.faker.enums.Locale
 import dev.qinx.faker.internal.{HasRandom, Logging}
 import dev.qinx.faker.provider.Provider
-import dev.qinx.faker.utils.ReflectUtils
+import dev.qinx.faker.utils.{Constants, ReflectUtils}
 
 class NameProvider extends Provider[String] with HasRandom with Logging {
 
@@ -30,7 +30,7 @@ class NameProvider extends Provider[String] with HasRandom with Logging {
 object NameProvider {
 
   def apply(locale: Locale): LocalNameProvider = {
-    val providerName = s"dev.qinx.faker.provider.person.${locale.name()}.NameProvider"
+    val providerName = s"${Constants.PERSON_PROVIDER}.${locale.name()}.NameProvider"
 
     Class
       .forName(providerName)

@@ -2,14 +2,14 @@ package dev.qinx.faker.provider.base
 
 import java.lang.annotation.Annotation
 
-import dev.qinx.faker.internal.{HasBoundary, HasRandom, HasString, Logging}
+import dev.qinx.faker.internal._
 import dev.qinx.faker.provider.Provider
-import dev.qinx.faker.utils.ReflectUtils
 
 class IntProvider
   extends Provider[Int]
     with HasRandom
     with HasBoundary[Int]
+    with HasOption[Int]
     with HasString
     with Logging  {
 
@@ -21,4 +21,6 @@ class IntProvider
   override def configure(annotation: Annotation): IntProvider.this.type = this.setMinMaxWithAnnotation(annotation)
 
   override def provideString: String = provide().toString
+
+  override def provideOption: Option[Int] = Option(provide())
 }

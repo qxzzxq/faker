@@ -2,12 +2,13 @@ package dev.qinx.faker.provider.base
 
 import java.lang.annotation.Annotation
 
-import dev.qinx.faker.internal.{HasBoundary, HasRandom, HasString, Logging}
+import dev.qinx.faker.internal._
 import dev.qinx.faker.provider.Provider
 
 class DoubleProvider
   extends Provider[Double]
     with HasBoundary[Double]
+    with HasOption[Double]
     with HasString
     with HasRandom
     with Logging  {
@@ -20,5 +21,6 @@ class DoubleProvider
   override def provide(): Double = min + (random.nextDouble() * (max - min))
 
   override def configure(annotation: Annotation): this.type = this.setMinMaxWithAnnotation(annotation)
-  
+
+  override def provideOption: Option[Double] = Option(provide())
 }
