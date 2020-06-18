@@ -1,7 +1,6 @@
 package dev.qinx.faker.annotation.base;
 
 import dev.qinx.faker.internal.CanProvide;
-import dev.qinx.faker.provider.base.IntProvider;
 import dev.qinx.faker.provider.base.LongProvider;
 
 import java.lang.annotation.ElementType;
