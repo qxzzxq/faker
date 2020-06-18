@@ -8,19 +8,27 @@ import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.utils.{DefaultProvider, ReflectUtils}
 
 import scala.collection.mutable
-import scala.reflect.ClassTag
 
-class ClassProvider[C : ClassTag] extends Provider[C] with Logging with HasSeed  {
+class ClassProvider extends Provider[Object] with Logging with HasSeed {
 
-  private[this] val classTag = implicitly[ClassTag[T]]
+  private[this] var cls: Option[Class[_]] = None
+
+  def setClass(cls: Class[_]): this.type = {
+    this.cls = Option(cls)
+    this
+  }
 
   /**
    * The primary constructor of the class T
    */
-  private[this] val primaryConstructor: Constructor[T] = {
-    val constructor = classTag.runtimeClass.getDeclaredConstructors.head
+  private[this] lazy val primaryConstructor: Constructor[_] = {
+    val constructor = cls
+      .getOrElse(throw new NoSuchElementException("No class has been set yet"))
+      .getDeclaredConstructors
+      .head
+
     constructor.setAccessible(true)
-    constructor.asInstanceOf[Constructor[T]]
+    constructor.asInstanceOf[Constructor[_]]
   }
 
   /**
@@ -30,6 +38,7 @@ class ClassProvider[C : ClassTag] extends Provider[C] with Logging with HasSeed 
 
   /**
    * For a given annotation,
+   *
    * @param annotation annotation that has the provider method
    * @throws NoSuchMethodException cannot find the provider method in the annotation
    * @return an object of type CanProvide
@@ -46,6 +55,7 @@ class ClassProvider[C : ClassTag] extends Provider[C] with Logging with HasSeed 
 
   /**
    * If a seed is set in Faker, then try to set the seed for the given provider if it has seed
+   *
    * @param provider provider that we want to set seed to
    */
   private[this] def setSeedOfProvider(provider: CanProvide): Unit = {
@@ -61,6 +71,7 @@ class ClassProvider[C : ClassTag] extends Provider[C] with Logging with HasSeed 
 
   /**
    * Get the data providers for each parameter of the primary constructor
+   *
    * @return a Map of parameter name to its data provider
    */
   @throws[NoSuchElementException]("No provider could be found")
@@ -79,18 +90,17 @@ class ClassProvider[C : ClassTag] extends Provider[C] with Logging with HasSeed 
         ReflectUtils.hasDeclaredMethod(a.annotationType(), "provider")
       }
 
-      annotation match {
+      val provider = annotation match {
         case Some(anno) =>
           log.debug(s"Set ${anno.annotationType().getSimpleName} provider for the field ${p.getName}: ${p.getType.getCanonicalName}")
-          val provider = getProviderFromAnnotation(anno)
-          setSeedOfProvider(provider)
-          providers.put(p.getName, provider)
+          getProviderFromAnnotation(anno)
         case _ =>
           log.debug(s"Set default provider for the field ${p.getName}: ${p.getType.getCanonicalName}")
-          val defaultProvider = DefaultProvider.of(p.getType)
-          setSeedOfProvider(defaultProvider)
-          providers.put(p.getName, defaultProvider)
+          DefaultProvider.of(p.getType)
       }
+
+      setSeedOfProvider(provider)
+      providers.put(p.getName, provider)
     }
 
     providers
@@ -98,6 +108,7 @@ class ClassProvider[C : ClassTag] extends Provider[C] with Logging with HasSeed 
 
   /**
    * Generate the initial arguments for the primary constructor of the type T
+   *
    * @return an array of Object
    */
   private[this] def getInitArgs: Array[Object] = {
@@ -133,8 +144,8 @@ class ClassProvider[C : ClassTag] extends Provider[C] with Logging with HasSeed 
     }
   }
 
-  override def provide(): C = primaryConstructor.newInstance(getInitArgs: _*)
+  override def provide(): Object = primaryConstructor.newInstance(getInitArgs: _*).asInstanceOf[Object]
 
   override def configure(annotation: Annotation): this.type = this
-  
+
 }

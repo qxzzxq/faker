@@ -11,8 +11,11 @@ import scala.reflect.ClassTag
 class Faker[T: ClassTag](val locale: Locale) extends HasSeed with Logging {
 
   def this() = this(Locale.en)
+  private[this] val classTag = implicitly[ClassTag[T]]
 
-  private[this] lazy val classProvider = new ClassProvider[T].setSeed(this.seed)
+  private[this] lazy val classProvider = new ClassProvider()
+    .setClass(classTag.runtimeClass)
+    .setSeed(this.seed)
 
   /**
    * Get an object of type T with faked data
@@ -38,6 +41,5 @@ object Faker {
   def name(locale: Locale = Locale.en): String = {
     dev.qinx.faker.provider.person.NameProvider(locale).provide()
   }
-
 
 }

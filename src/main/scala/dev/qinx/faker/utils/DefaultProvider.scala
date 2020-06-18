@@ -2,13 +2,14 @@ package dev.qinx.faker.utils
 
 import java.time.LocalDate
 
+import dev.qinx.faker.internal.CanProvide
 import dev.qinx.faker.provider._
 import dev.qinx.faker.provider.base._
 
 object DefaultProvider {
 
   @throws[NoSuchElementException]
-  def of(obj: Class[_]): Provider[_] = {
+  def of(obj: Class[_]): CanProvide = {
     if (obj.equals(classOf[LocalDate])) return new datetime.LocalDateProvider()
     if (obj.equals(classOf[String])) return new StringProvider()
     if (obj.equals(classOf[Float])) return new FloatProvider()
@@ -19,7 +20,7 @@ object DefaultProvider {
     if (obj.equals(classOf[Array[Byte]])) return new ByteArrayProvider()
     if (obj.equals(classOf[Short])) return new ShortProvider()
     if (obj.equals(classOf[Char])) return new CharProvider()
-    throw new NoSuchElementException(s"Can't find default provider for type ${obj.getCanonicalName}")
+    new ClassProvider().setClass(obj)
   }
 
 }
