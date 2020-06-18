@@ -2,6 +2,7 @@ package dev.qinx.faker.provider.base
 
 import dev.qinx.faker.Faker
 import dev.qinx.faker.annotation.base.IntType
+import dev.qinx.faker.utils.SeedTester
 import org.scalatest.funsuite.AnyFunSuite
 
 class IntProviderSuite extends AnyFunSuite {
@@ -13,6 +14,10 @@ class IntProviderSuite extends AnyFunSuite {
     println(faker.get())
     assert(faker.get().c2 === 0)
 
+  }
+
+  test("Test seed") {
+    new SeedTester[TestIntProvider]
   }
 
 }
