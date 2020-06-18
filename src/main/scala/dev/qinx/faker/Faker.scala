@@ -5,7 +5,7 @@ import java.lang.reflect.Constructor
 import java.time.LocalDate
 
 import dev.qinx.faker.enums.Locale
-import dev.qinx.faker.internal.{CanProvide, HasSeed, HasString, Logging}
+import dev.qinx.faker.internal.{CanProvide, HasOption, HasSeed, HasString, Logging}
 import dev.qinx.faker.utils.{DefaultProvider, ReflectUtils}
 
 import scala.collection.mutable
@@ -132,8 +132,15 @@ class Faker[T: ClassTag](val locale: Locale) extends HasSeed with Logging {
       if (paramCls.isAssignableFrom(fakeDataCls)) {
         fakeData.asInstanceOf[Object]
       } else {
+
         if (paramType.equals(classOf[String]) && classOf[HasString].isAssignableFrom(provider.getClass)) {
+          // handle the string conversion
           provider.asInstanceOf[HasString].provideString.asInstanceOf[Object]
+
+        } else if (paramType.equals(classOf[Option[_]]) && classOf[HasOption[_]].isAssignableFrom(provider.getClass)) {
+          // handle the Option conversion
+          provider.asInstanceOf[HasOption[_]].provideOption.asInstanceOf[Object]
+
         } else {
           throw new NoSuchElementException(s"Cannot provide ${fakeDataCls.getSimpleName} to a field of type $paramType")
         }

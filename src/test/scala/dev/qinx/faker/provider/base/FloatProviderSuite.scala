@@ -12,10 +12,15 @@ class FloatProviderSuite extends AnyFunSuite {
 
     val faker = new Faker[TestFloatProvider]
     println(faker.get())
+    println(faker.get())
+    println(faker.get())
+    println(faker.get())
+    println(faker.get())
+    println(faker.get())
 
     (1 to 10) foreach { _ =>
       val c2: Float = faker.get().c2
-      assert(c2 >= 0 && c2 <=1)
+      assert(c2 >= 100 && c2 <= 101)
     }
   }
 
@@ -30,7 +35,8 @@ class FloatProviderSuite extends AnyFunSuite {
 object FloatProviderSuite {
 
   case class TestFloatProvider(@FloatType c1: String,
-                               @FloatType(min = 0, max = 1) c2: Float)
+                               @FloatType(min = 100, max = 101) c2: Float,
+  @FloatType c3: Option[Float])
 
   case class TestFloatProviderException(@FloatType c1: String,
                                         @FloatType(min = 0, max = 1) c2: Int)

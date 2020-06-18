@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface FloatType {
-    float min() default Float.MIN_VALUE;
-    float max() default Float.MAX_VALUE;
+    float min() default 0F;
+    float max() default 1F;
     Class<? extends CanProvide> provider() default FloatProvider.class;
 }
