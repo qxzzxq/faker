@@ -9,4 +9,9 @@ trait HasSeed {
     this
   }
 
+  def setSeed(seed: Option[Long]): this.type = {
+    this.seed = seed
+    this
+  }
+
 }
