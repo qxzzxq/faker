@@ -34,8 +34,7 @@ object NameProvider {
 
     Class
       .forName(providerName)
-      .getDeclaredConstructors
-      .head
+      .getDeclaredConstructor()
       .newInstance()
       .asInstanceOf[LocalNameProvider]
   }
