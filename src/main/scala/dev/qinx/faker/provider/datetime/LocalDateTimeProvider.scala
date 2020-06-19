@@ -1,7 +1,7 @@
 package dev.qinx.faker.provider.datetime
 
 import java.lang.annotation.Annotation
-import java.time.{LocalDate => LD}
+import java.time.{LocalDateTime, LocalTime}
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
@@ -9,11 +9,11 @@ import dev.qinx.faker.internal.{HasRandom, HasString, Logging}
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.utils.ReflectUtils
 
-class LocalDateProvider() extends Provider[LD] with HasRandom with HasString with Logging {
+class LocalDateTimeProvider() extends Provider[LocalDateTime] with HasRandom with HasString with Logging {
 
-  private[this] var dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_DATE
-  private[this] val minDay: LD = LD.of(1970, 1, 1)
-  private[this] val range: Long = ChronoUnit.DAYS.between(minDay, LD.now())
+  private[this] var dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME
+  private[this] val dateProvider = new LocalDateProvider
+  private[this] val timeProvider = new LocalTimeProvider
 
   def setPattern(pattern: String): this.type = {
     if (pattern != "") {
@@ -23,8 +23,18 @@ class LocalDateProvider() extends Provider[LD] with HasRandom with HasString wit
     this
   }
 
-  override def provide(): LD = {
-    minDay.plusDays(random.nextInt(range.toInt))
+  override def setSeed(seed: Option[Long]): LocalDateTimeProvider.this.type = {
+    dateProvider.setSeed(seed)
+    timeProvider.setSeed(seed)
+    this
+  }
+
+  override def setSeed(seed: Long): LocalDateTimeProvider.this.type = {
+    setSeed(Some(seed))
+  }
+
+  override def provide(): LocalDateTime = {
+    LocalDateTime.of(dateProvider.provide(), timeProvider.provide())
   }
 
   override def configure(annotation: Annotation): this.type = {

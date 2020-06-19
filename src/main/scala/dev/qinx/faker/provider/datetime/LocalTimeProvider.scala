@@ -1,7 +1,7 @@
 package dev.qinx.faker.provider.datetime
 
 import java.lang.annotation.Annotation
-import java.time.{LocalDate => LD}
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
@@ -9,11 +9,13 @@ import dev.qinx.faker.internal.{HasRandom, HasString, Logging}
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.utils.ReflectUtils
 
-class LocalDateProvider() extends Provider[LD] with HasRandom with HasString with Logging {
+class LocalTimeProvider() extends Provider[LocalTime] with HasRandom with HasString with Logging {
 
-  private[this] var dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_DATE
-  private[this] val minDay: LD = LD.of(1970, 1, 1)
-  private[this] val range: Long = ChronoUnit.DAYS.between(minDay, LD.now())
+  private[this] var dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_TIME
+  private[this] val minTime: LocalTime = LocalTime.MIN
+  private[this] val maxTime: LocalTime = LocalTime.MAX
+
+  private[this] val range: Long = ChronoUnit.SECONDS.between(minTime, maxTime)
 
   def setPattern(pattern: String): this.type = {
     if (pattern != "") {
@@ -23,8 +25,8 @@ class LocalDateProvider() extends Provider[LD] with HasRandom with HasString wit
     this
   }
 
-  override def provide(): LD = {
-    minDay.plusDays(random.nextInt(range.toInt))
+  override def provide(): LocalTime = {
+    minTime.plusSeconds(random.nextInt(range.toInt))
   }
 
   override def configure(annotation: Annotation): this.type = {
