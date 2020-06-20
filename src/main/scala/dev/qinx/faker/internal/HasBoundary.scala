@@ -5,24 +5,24 @@ import java.lang.annotation.Annotation
 import dev.qinx.faker.utils.ReflectUtils
 
 
-trait HasBoundary[T] {
+trait HasBoundary[BoundedT] {
 
-  protected var min: T
-  protected var max: T
+  protected var min: BoundedT
+  protected var max: BoundedT
 
-  def setMin(min: T): this.type = {
+  def setMin(min: BoundedT): this.type = {
     this.min = min
     this
   }
 
-  def setMax(max: T): this.type = {
+  def setMax(max: BoundedT): this.type = {
     this.max = max
     this
   }
 
   protected def setMinMaxWithAnnotation(annotation: Annotation): this.type = {
-    this.setMax(ReflectUtils.invokeAnnotationMethod[T](annotation, "max"))
-    this.setMin(ReflectUtils.invokeAnnotationMethod[T](annotation, "min"))
+    this.setMax(ReflectUtils.invokeAnnotationMethod[BoundedT](annotation, "max"))
+    this.setMin(ReflectUtils.invokeAnnotationMethod[BoundedT](annotation, "min"))
     this
   }
 

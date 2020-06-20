@@ -1,7 +1,7 @@
 package dev.qinx.faker.internal
 
-trait HasOption[T] {
+trait HasOption[OptionT] {
 
-  def provideOption: Option[T]
+  def provideOption: Option[OptionT]
 
 }
