@@ -20,7 +20,10 @@ class DoubleProvider
 
   override def provide(): Double = min + (random.nextDouble() * (max - min))
 
-  override def configure(annotation: Annotation): this.type = this.setMinMaxWithAnnotation(annotation)
+  override def configure(annotation: Annotation): this.type = {
+    this.setSeed(annotation)
+    this.setMinMaxWithAnnotation(annotation)
+  }
 
   override def provideOption: Option[Double] = Option(provide())
 }

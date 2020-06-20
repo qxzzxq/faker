@@ -3,6 +3,7 @@ package dev.qinx.faker.utils
 import dev.qinx.faker.Faker
 
 import scala.reflect.ClassTag
+import scala.util.Random
 
 
 class SeedTester[T : ClassTag](times: Int = 100) {
@@ -17,6 +18,13 @@ class SeedTester[T : ClassTag](times: Int = 100) {
     val fd3 = faker3.get()
     assert(fd.equals(fd2))
     assert(!fd.equals(fd3))
+  }
+
+  def test(f: Faker[T] => Boolean): Unit = {
+    (1 to times) foreach { _ =>
+      val faker = new Faker[T]().setSeed(Random.nextLong())
+      assert(f(faker))
+    }
   }
 
 }

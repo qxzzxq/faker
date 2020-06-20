@@ -18,7 +18,10 @@ class FloatProvider
 
   override def provide(): Float = min + (random.nextDouble() * (max - min)).toFloat
 
-  override def configure(annotation: Annotation): this.type = this.setMinMaxWithAnnotation(annotation)
+  override def configure(annotation: Annotation): this.type = {
+    this.setSeed(annotation)
+    this.setMinMaxWithAnnotation(annotation)
+  }
 
   override def provideString: String = provide().toString
 

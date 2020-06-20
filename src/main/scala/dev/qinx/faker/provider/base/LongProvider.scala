@@ -18,7 +18,10 @@ class LongProvider
 
   override def provide(): Long = min + (random.nextDouble() * (max - min)).toLong
 
-  override def configure(annotation: Annotation): this.type = this.setMinMaxWithAnnotation(annotation)
+  override def configure(annotation: Annotation): this.type = {
+    this.setSeed(annotation)
+    this.setMinMaxWithAnnotation(annotation)
+  }
 
   override def provideString: String = provide().toString
 

@@ -30,6 +30,13 @@ class Faker[T: ClassTag](val locale: Locale) extends HasSeed with Logging {
    */
   def get(length: Long): Seq[T] = (1L to length).map(_ => get())
 
+  /**
+   * Set seed for Faker. This seed will be applied to providers if no seed can be found in the annotation.
+   * In other word, seed set in annotation arguments will override this seed.
+   * @param seed seed
+   * @return
+   */
+  override def setSeed(seed: Long): Faker.this.type = super.setSeed(seed)
 }
 
 object Faker {

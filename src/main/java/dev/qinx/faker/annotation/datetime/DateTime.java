@@ -13,5 +13,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 public @interface DateTime {
     String format() default "";
+    String seed() default "";
     Class<? extends CanProvide> provider() default LocalDateTimeProvider.class;
 }

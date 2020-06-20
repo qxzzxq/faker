@@ -30,7 +30,7 @@ class LocalDateTimeProvider() extends Provider[LocalDateTime] with HasRandom wit
   }
 
   override def setSeed(seed: Long): LocalDateTimeProvider.this.type = {
-    setSeed(Some(seed))
+    this.setSeed(Some(seed))
   }
 
   override def provide(): LocalDateTime = {
@@ -40,6 +40,10 @@ class LocalDateTimeProvider() extends Provider[LocalDateTime] with HasRandom wit
   override def configure(annotation: Annotation): this.type = {
     val pattern = ReflectUtils.invokeAnnotationMethod[String](annotation, "format")
     this.setPattern(pattern)
+    val _seed = super.getSeedFromAnnotation(annotation)
+    if (_seed.isDefined) {
+      this.setSeed(_seed)
+    }
 
     this
   }

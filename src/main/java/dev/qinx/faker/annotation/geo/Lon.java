@@ -14,5 +14,6 @@ public @interface Lon {
     double min() default -180D;
     double max() default 180D;
     String onLand() default "false";
+    String seed() default "";
     Class<? extends CanProvide> provider() default CoordinatesProvider.class;
 }

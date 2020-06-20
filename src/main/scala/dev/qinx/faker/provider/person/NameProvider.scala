@@ -14,7 +14,9 @@ class NameProvider extends Provider[String] with HasRandom with Logging {
   override def provide(): String = this.provider.provide()
 
   override def setSeed(seed: Long): NameProvider.this.type = {
-    this.provider.setSeed(seed)
+    if (!this.provider.hasSeed) {
+      this.provider.setSeed(seed)
+    }
     this
   }
 

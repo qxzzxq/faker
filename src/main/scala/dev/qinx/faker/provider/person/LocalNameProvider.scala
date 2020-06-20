@@ -66,6 +66,7 @@ private[person] abstract class LocalNameProvider(val locale: Locale) extends Pro
     _firstName = ReflectUtils.invokeAnnotationMethod[String](annotation, "firstName").toBoolean
     _lastName = ReflectUtils.invokeAnnotationMethod[String](annotation, "lastName").toBoolean
     _gender = ReflectUtils.invokeAnnotationMethod[Gender](annotation, "gender")
+    this.setSeed(annotation)
     this
   }
 

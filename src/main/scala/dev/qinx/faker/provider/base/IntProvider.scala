@@ -18,7 +18,10 @@ class IntProvider
 
   override def provide(): Int = random.ints(1, min, max).findFirst().getAsInt
 
-  override def configure(annotation: Annotation): IntProvider.this.type = this.setMinMaxWithAnnotation(annotation)
+  override def configure(annotation: Annotation): IntProvider.this.type = {
+    this.setSeed(annotation)
+    this.setMinMaxWithAnnotation(annotation)
+  }
 
   override def provideString: String = provide().toString
 

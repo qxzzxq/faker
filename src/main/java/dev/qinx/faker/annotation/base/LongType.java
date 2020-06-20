@@ -13,5 +13,6 @@ import java.lang.annotation.Target;
 public @interface LongType {
     long min() default Long.MIN_VALUE;
     long max() default Long.MAX_VALUE;
+    String seed() default "";
     Class<? extends CanProvide> provider() default LongProvider.class;
 }

@@ -61,9 +61,16 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
   private[this] def setSeedOfProvider(provider: CanProvide): Unit = {
     this.seed match {
       case Some(seed) =>
+        // set seed only if the provider inherits the HasSeed trait
         if (classOf[HasSeed].isAssignableFrom(provider.getClass)) {
-          if (log.isTraceEnabled()) log.trace(s"${provider.getClass.getCanonicalName} has seed")
-          provider.asInstanceOf[HasSeed].setSeed(seed)
+          if (log.isTraceEnabled()) {
+            log.trace(s"${provider.getClass.getCanonicalName} has seed")
+          }
+
+          // Do not override the existing seed
+          if (!provider.asInstanceOf[HasSeed].hasSeed) {
+            provider.asInstanceOf[HasSeed].setSeed(seed)
+          }
         }
       case _ =>
     }

@@ -32,6 +32,7 @@ class LocalTimeProvider() extends Provider[LocalTime] with HasRandom with HasStr
   override def configure(annotation: Annotation): this.type = {
     val pattern = ReflectUtils.invokeAnnotationMethod[String](annotation, "format")
     this.setPattern(pattern)
+    super.setSeed(annotation)
 
     this
   }

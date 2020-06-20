@@ -18,5 +18,6 @@ import java.lang.annotation.Target;
 public @interface IntType {
     int min() default Integer.MIN_VALUE;
     int max() default Integer.MAX_VALUE;
+    String seed() default "";
     Class<? extends CanProvide> provider() default IntProvider.class;
 }

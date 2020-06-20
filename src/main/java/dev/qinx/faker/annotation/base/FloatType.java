@@ -18,5 +18,6 @@ import java.lang.annotation.Target;
 public @interface FloatType {
     float min() default 0F;
     float max() default 1F;
+    String seed() default "";
     Class<? extends CanProvide> provider() default FloatProvider.class;
 }

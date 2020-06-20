@@ -24,6 +24,7 @@ class CoordinatesProvider extends DoubleProvider {
     }
 
     this.setMinMaxWithAnnotation(annotation)
+    this.setSeed(annotation)
 
     this
   }

@@ -13,5 +13,6 @@ import java.lang.annotation.Target;
 public @interface DoubleType {
     double min() default 0D;
     double max() default 1D;
+    String seed() default "";
     Class<? extends CanProvide> provider() default DoubleProvider.class;
 }

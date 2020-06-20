@@ -30,6 +30,7 @@ class LocalDateProvider() extends Provider[LocalDate] with HasRandom with HasStr
   override def configure(annotation: Annotation): this.type = {
     val pattern = ReflectUtils.invokeAnnotationMethod[String](annotation, "format")
     this.setPattern(pattern)
+    this.setSeed(annotation)
 
     this
   }

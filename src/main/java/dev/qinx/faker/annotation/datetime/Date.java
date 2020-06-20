@@ -12,5 +12,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 public @interface Date {
     String format() default "";
+    String seed() default "";
     Class<? extends CanProvide> provider() default LocalDateProvider.class;
 }

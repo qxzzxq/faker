@@ -14,5 +14,6 @@ public @interface Lat {
     double min() default -90D;
     double max() default 90D;
     String onLand() default "false";
+    String seed() default "";
     Class<? extends CanProvide> provider() default CoordinatesProvider.class;
 }
