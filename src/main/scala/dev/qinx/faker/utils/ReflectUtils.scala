@@ -27,7 +27,7 @@ private[faker] object ReflectUtils extends Logging {
   }
 
   /**
-   * Invoke a method of the given class for an object of this class
+   * Invoke a PUBLIC method of the given class for an object of this class
    *
    * @param cls  class of obj
    * @param name name of the method
