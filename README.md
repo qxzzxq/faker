@@ -79,5 +79,12 @@ new Faker[Outer].get(10).foreach(println)
   - `@Lon`
 - person
   - `@Name`
-
+  
 More features will be added.
+
+## Localization
+Some annotations can handle locales, just configure the annotation with 
+the corresponding `Locale` value like this:
+```Scala
+@Name(locale = Locale.zh_CN)
+```
