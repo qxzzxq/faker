@@ -19,7 +19,7 @@ class LocalTimeProvider() extends Provider[LocalTime] with HasRandom with HasStr
 
   def setPattern(pattern: String): this.type = {
     if (pattern != "") {
-      log.debug(s"Set date pattern to $pattern")
+      log.debug(s"Set time pattern to $pattern")
       this.dateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
     }
     this
