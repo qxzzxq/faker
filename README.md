@@ -6,7 +6,7 @@ Faker is a Scala library that can generate fake data.
 
 This project is inspired by the [Python package Faker](https://github.com/joke2k/faker).
 
-## Usage
+## Get faker
 This project does not have a stable release yet (maybe soon). To test faker, use the snapshot version:
 ```xml
 <repositories>
@@ -25,7 +25,9 @@ This project does not have a stable release yet (maybe soon). To test faker, use
 </dependencies>
 ```
 
-## Example
+## Usage
+
+Just add *faker*'s annotations into a standard Scala case class and *faker* will handle the rest.
 
 ```scala
 import dev.qinx.faker.Faker
@@ -60,5 +62,22 @@ new Faker[Outer].get(10).foreach(println)
 //  Outer(1985-12-17,-25.288438631194964,-116.0055677254131,Inner(易磊,Bailey Goodwin,Inner2(Some(0.2013667637508989))))
 //  Outer(1990-02-28,78.71188964192572,69.35016034176547,Inner(赖小红,Hilmer Harber,Inner2(Some(0.10355297303863198))))
 ```
+
+## Available Annotations
+- base
+  - `@IntType`
+  - `@LongType`
+  - `@FloatType`
+  - `@DoubleType`
+  - `@Text`
+- datetime
+  - `@Date`
+  - `@Time`
+  - `@DateTime`
+- geo
+  - `@Lat`
+  - `@Lon`
+- person
+  - `@Name`
 
 More features will be added.
