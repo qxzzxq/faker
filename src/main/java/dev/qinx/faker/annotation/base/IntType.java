@@ -10,8 +10,10 @@ import java.lang.annotation.Target;
 
 /**
  * Generate a random int value for the annotated filed.
- * The value will be uniformly distributed between Integer.MIN_VALUE and Integer.MAX_VALUE
+ * The value will be uniformly distributed between the min value (included) and the max value (included)
  * from this random number generator's sequence.
+ * <p>
+ * The default min is <code>Integer.MIN_VALUE</code> and the max is <code>Integer.MAX_VALUE</code>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})

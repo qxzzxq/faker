@@ -11,13 +11,15 @@ class IntProviderSuite extends AnyFunSuite {
   test("IntProvider should provide Integer") {
 
     val faker = new Faker[TestIntProvider]
-    println(faker.get())
-    assert(faker.get().c2 === 0)
+
+    (1 to 100) foreach { _ =>
+      assert(Array(0, 1).contains(faker.get().c2))
+    }
 
   }
 
   test("Test seed") {
-    new SeedTester[TestIntProvider]
+    new SeedTester[TestIntProviderSeed]
   }
 
 }
@@ -26,5 +28,8 @@ object IntProviderSuite {
 
   case class TestIntProvider(@IntType c1: String,
                              @IntType(min = 0, max = 1) c2: Int)
+
+  case class TestIntProviderSeed(@IntType c1: String,
+                                 @IntType c2: Int)
 
 }

@@ -15,8 +15,16 @@ class IntProvider
 
   override protected var min: Int = Integer.MIN_VALUE
   override protected var max: Int = Integer.MAX_VALUE
+  private[this] lazy val range: Int = max - min
 
-  override def provide(): Int = random.ints(1, min, max).findFirst().getAsInt
+  override def provide(): Int = {
+    // if overflow
+    if (range < 0) {
+      random.nextInt()
+    } else {
+      min + math.round(random.nextFloat() * range)
+    }
+  }
 
   override def configure(annotation: Annotation): IntProvider.this.type = {
     this.setSeed(annotation)

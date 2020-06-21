@@ -1,7 +1,7 @@
 package dev.qinx.faker.provider.base
 
 import dev.qinx.faker.Faker
-import dev.qinx.faker.annotation.base.Text
+import dev.qinx.faker.annotation.base.{Digit, LowerCase, Text, UpperCase}
 import dev.qinx.faker.utils.SeedTester
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -28,6 +28,18 @@ class StringProviderSuite extends AnyFunSuite {
     }
   }
 
+  test("UpperCase LowerCase and Number") {
+
+    val faker = new Faker[UpperLowerTest]
+
+    faker.get(1000).foreach { data =>
+      assert("ABCDEFGHIJKLMNOPQRSTUVWXYZ".contains(data.col1.charAt(0)))
+      assert("abcdefghijklmnopqrstuvwxyz".contains(data.col2.charAt(0)))
+      assert("0123456789".contains(data.col3.charAt(0)))
+    }
+
+  }
+
 }
 
 object StringProviderSuite {
@@ -43,5 +55,9 @@ object StringProviderSuite {
                           @Text col2: String,
                           @Text(seed = "111") col3: String,
                           @Text(seed = "111") col4: String)
+
+  case class UpperLowerTest(@UpperCase col1: String,
+                            @LowerCase col2: String,
+                            @Digit col3: String)
 
 }

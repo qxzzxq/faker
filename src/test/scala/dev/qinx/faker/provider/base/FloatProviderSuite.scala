@@ -19,9 +19,9 @@ class FloatProviderSuite extends AnyFunSuite {
     println(faker.get())
     println(faker.get())
 
-    (1 to 100) foreach { _ =>
+    (1 to 1000) foreach { _ =>
       val c2: Float = faker.get().c2
-      assert(c2 >= 100 && c2 <= 101)
+      assert(c2 >= 100 && c2 < 101)
     }
   }
 

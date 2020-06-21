@@ -70,6 +70,9 @@ new Faker[Outer].get(10).foreach(println)
   - `@FloatType`
   - `@DoubleType`
   - `@Text`
+  - `@UpperCase`
+  - `@LowerCase`
+  - `@Digit`
 - datetime
   - `@Date`
   - `@Time`

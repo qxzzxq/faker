@@ -6,13 +6,11 @@ import dev.qinx.faker.internal.{HasRandom, Logging}
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.utils.ReflectUtils
 
-import scala.collection.immutable.Stream
-
 class StringProvider extends Provider[String] with HasRandom with Logging {
 
   import StringProvider._
 
-  private[this] var pattern: String = "## ??"
+  private[this] var pattern: String = "??????????"
   private[this] var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
   private[this] var digits = "0123456789"
 
