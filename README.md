@@ -82,6 +82,8 @@ new Faker[Outer].get(10).foreach(println)
   - `@Lon`
 - person
   - `@Name`
+- transport
+  - `@Airport`
   
 More features will be added.
 

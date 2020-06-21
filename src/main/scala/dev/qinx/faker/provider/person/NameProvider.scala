@@ -32,7 +32,7 @@ class NameProvider extends Provider[String] with HasRandom with Logging {
 object NameProvider {
 
   def apply(locale: Locale): LocalNameProvider = {
-    val providerName = s"${Constants.PERSON_PROVIDER}.${locale.name()}.NameProvider"
+    val providerName = s"${Constants.PERSON_PROVIDER_PACKAGE}.${locale.name()}.NameProvider"
 
     Class
       .forName(providerName)
