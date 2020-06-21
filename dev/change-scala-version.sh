@@ -19,7 +19,7 @@
 
 set -e
 
-VALID_VERSIONS=( 2.11 2.12 )
+VALID_VERSIONS=(2.11 2.12)
 
 usage() {
   echo "Usage: $(basename $0) [-h|--help] <version>
@@ -30,7 +30,7 @@ where :
   exit 1
 }
 
-if [[ ($# -ne 1) || ( $1 == "--help") ||  $1 == "-h" ]]; then
+if [[ ($# -ne 1) || ($1 == "--help") || $1 == "-h" ]]; then
   usage
 fi
 
@@ -55,7 +55,7 @@ else
 fi
 
 sed_i() {
-  sed -e "$1" "$2" > "$2.tmp" && mv "$2.tmp" "$2"
+  sed -e "$1" "$2" >"$2.tmp" && mv "$2.tmp" "$2"
 }
 
 export -f sed_i
@@ -63,10 +63,10 @@ export -f sed_i
 BASEDIR=$(dirname $0)/..
 
 find "$BASEDIR" -name 'pom.xml' -not -path '*target*' -print \
-  -exec bash -c "sed_i 's/\(artifactId>setl\)_'$FROM_COMP_VERSION'/\1_'$TO_COMP_VERSION'/g' {}" \;
+-exec bash -c "sed_i 's/\(artifactId>setl\)_'$FROM_COMP_VERSION'/\1_'$TO_COMP_VERSION'/g' {}" \;
 
 find "$BASEDIR" -name 'pom.xml' -not -path '*target*' -print \
-  -exec bash -c "sed_i 's/\(scala.compat.version>\)'$FROM_COMP_VERSION'/\1'$TO_COMP_VERSION'/g' {}" \;
+-exec bash -c "sed_i 's/\(scala.compat.version>\)'$FROM_COMP_VERSION'/\1'$TO_COMP_VERSION'/g' {}" \;
 
 find "$BASEDIR" -name 'pom.xml' -not -path '*target*' -print \
-  -exec bash -c "sed_i 's/\(scala.version>\)'$FROM_VERSION'/\1'$TO_VERSION'/g' {}" \;
+-exec bash -c "sed_i 's/\(scala.version>\)'$FROM_VERSION'/\1'$TO_VERSION'/g' {}" \;
