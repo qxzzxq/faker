@@ -1,7 +1,6 @@
 package dev.qinx.faker.annotation.base;
 
 import dev.qinx.faker.internal.CanProvide;
-import dev.qinx.faker.provider.base.DoubleProvider;
 import dev.qinx.faker.provider.base.StringProvider;
 
 import java.lang.annotation.ElementType;
@@ -17,9 +16,9 @@ import java.lang.annotation.Target;
  *     <li>Question marks (‘?’) are replaced with a random character from letters.</li>
  * </ul>
  *
- * By default, letters contains all ASCII letters, uppercase and lowercase and digits contains [0-9].
+ * <p>By default, letters contains all ASCII letters, uppercase and lowercase and digits contains [0-9].</p>
  *
- * The default pattern is '<code>## ??</code>'
+ * <p>The default pattern is '<code>## ??</code>'</p>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})

@@ -12,8 +12,8 @@ import java.lang.annotation.Target;
  * Generate a random double for the annotated filed.
  * The value will be uniformly distributed between min and max value
  * from this random number generator's sequence.
- * <p>
- * The default range is <code>[0D, 1D]</code>
+ *
+ * <p>The default range is <code>[0D, 1D]</code></p>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})

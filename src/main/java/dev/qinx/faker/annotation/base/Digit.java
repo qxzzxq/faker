@@ -14,10 +14,10 @@ import java.lang.annotation.Target;
  * <ul>
  *     <li>Number signs (‘#’) are replaced with a random digit from digits.</li>
  * </ul>
+ *
  * <p>
- * By default, digits contains [0-9].
- * <p>
- * The default pattern is '<code>#</code>'
+ * By default, digits contains [0-9]. The default pattern is '<code>#</code>'
+ * </p>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})

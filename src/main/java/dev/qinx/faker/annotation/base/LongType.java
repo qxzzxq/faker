@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * The value will be uniformly distributed between the min value (included) and the max value (included)
  * from this random number generator's sequence.
  * <p>
- * The default min is <code>Long.MIN_VALUE</code> and the max is <code>Long.MAX_VALUE</code>
+ * The default min is <code>Long.MIN_VALUE</code> and the max is <code>Long.MAX_VALUE</code></p>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})

@@ -15,9 +15,9 @@ import java.lang.annotation.Target;
  *     <li>Question marks (‘?’) are replaced with a random character from letters.</li>
  * </ul>
  * <p>
- * By default, letters contains all lowercase ASCII letters.
+ * By default, letters contains all lowercase ASCII letters.</p>
  * <p>
- * The default pattern is '<code>?</code>'
+ * The default pattern is '<code>?</code>'</p>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
