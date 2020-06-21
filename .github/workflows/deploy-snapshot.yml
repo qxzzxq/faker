@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  test_faker_2_12:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -16,7 +16,7 @@ jobs:
         with:
           java-version: 1.8
 
-      - name: Prepare
+      - name: Prepare maven
         env:
           MVN_SETTINGS: ${{ secrets.MVN_SETTINGS }}
         run: |
@@ -31,5 +31,34 @@ jobs:
           flags: master
           name: codecov-master-branch
 
-      - name: Deploy
+      - name: Deploy faker_2.12 SNAPSHOT
+        run: mvn -ntp -B clean deploy -DskipTests -Psnapshot
+
+  test_faker_2_11:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Set scala 2.11
+        run: |
+          chmod +x ./dev/change-scala-version.sh
+          ./dev/change-scala-version.sh 2.11
+
+      - name: Prepare maven
+        env:
+          MVN_SETTINGS: ${{ secrets.MVN_SETTINGS }}
+        run: |
+          echo "$MVN_SETTINGS" | base64 -d > "$HOME"/.m2/settings.xml
+
+      - name: Run tests
+        run: |
+          mvn -ntp -B clean:clean scoverage:report
+
+      - name: Deploy faker_2.11 SNAPSHOT
         run: mvn -ntp -B clean deploy -DskipTests -Psnapshot
