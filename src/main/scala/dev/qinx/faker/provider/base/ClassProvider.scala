@@ -22,8 +22,11 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
    * The primary constructor of the class T
    */
   private[this] lazy val primaryConstructor: Constructor[_] = {
-    val constructor = cls
-      .getOrElse(throw new NoSuchElementException("No class has been set yet"))
+    if (cls.isEmpty) {
+      throw new NoSuchElementException("No class has been set yet")
+    }
+
+    val constructor = cls.get
       .getDeclaredConstructors
       .head
 
@@ -64,7 +67,7 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
         // set seed only if the provider inherits the HasSeed trait
         if (classOf[HasSeed].isAssignableFrom(provider.getClass)) {
           if (log.isTraceEnabled()) {
-            log.trace(s"${provider.getClass.getCanonicalName} has seed")
+            log.trace(s"${provider.getClass.getCanonicalName} can have seed")
           }
 
           // Do not override the existing seed
@@ -130,6 +133,10 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
       val fakeData = provider.provide()
       val fakeDataCls: Class[_] = fakeData.getClass
       val paramCls: Class[_] = ReflectUtils.getClassOf(paramType)
+
+      if (log.isTraceEnabled()) {
+        log.trace(s"param: ${param.getName}, paramType: ${paramType.getCanonicalName}, fakeData class: ${fakeDataCls.getCanonicalName}")
+      }
 
       if (paramCls.isAssignableFrom(fakeDataCls)) {
         fakeData.asInstanceOf[Object]
