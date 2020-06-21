@@ -9,9 +9,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Generate a random float value for the annotated filed.
- * The value will be uniformly distributed between Float.MIN_VALUE and Float.MAX_VALUE
+ * Generate a random float for the annotated filed.
+ * The value will be uniformly distributed between min and max value
  * from this random number generator's sequence.
+ * <p>
+ * The default range is <code>[0F, 1F]</code>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})

@@ -8,11 +8,21 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Generate a random double for the annotated filed.
+ * The value will be uniformly distributed between min and max value
+ * from this random number generator's sequence.
+ * <p>
+ * The default range is <code>[0D, 1D]</code>
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
 public @interface DoubleType {
     double min() default 0D;
+
     double max() default 1D;
+
     String seed() default "";
+
     Class<? extends CanProvide> provider() default DoubleProvider.class;
 }
