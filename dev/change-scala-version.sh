@@ -46,12 +46,12 @@ check_scala_version "$TO_COMP_VERSION"
 
 if [ $TO_COMP_VERSION = "2.11" ]; then
   FROM_COMP_VERSION="2.12"
-  FROM_VERSION="2.12.10"
+  FROM_VERSION="2.12.11"
   TO_VERSION="2.11.12"
 else
   FROM_COMP_VERSION="2.11"
   FROM_VERSION="2.11.12"
-  TO_VERSION="2.12.10"
+  TO_VERSION="2.12.11"
 fi
 
 sed_i() {
@@ -63,7 +63,7 @@ export -f sed_i
 BASEDIR=$(dirname $0)/..
 
 find "$BASEDIR" -name 'pom.xml' -not -path '*target*' -print \
--exec bash -c "sed_i 's/\(artifactId>setl\)_'$FROM_COMP_VERSION'/\1_'$TO_COMP_VERSION'/g' {}" \;
+-exec bash -c "sed_i 's/\(artifactId>faker\)_'$FROM_COMP_VERSION'/\1_'$TO_COMP_VERSION'/g' {}" \;
 
 find "$BASEDIR" -name 'pom.xml' -not -path '*target*' -print \
 -exec bash -c "sed_i 's/\(scala.compat.version>\)'$FROM_COMP_VERSION'/\1'$TO_COMP_VERSION'/g' {}" \;
