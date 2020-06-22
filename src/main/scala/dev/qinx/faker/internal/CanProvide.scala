@@ -8,6 +8,6 @@ trait CanProvide {
 
   def provide(): T
 
-  def configure(annotation: Annotation): this.type
+  def configure(annotation: Annotation): this.type = this
 
 }

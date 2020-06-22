@@ -1,11 +1,13 @@
 package dev.qinx.faker
 
-import dev.qinx.faker.FakerSuite.{CompleteTestClass, TestClass, TestName}
+import dev.qinx.faker.FakerSuite.{CompleteTestClass, MyProvider, TestClass, TestName}
 import dev.qinx.faker.annotation.base.{DoubleType, LongType}
 import dev.qinx.faker.annotation.datetime.Date
 import dev.qinx.faker.annotation.geo.{Lat, Lon}
 import dev.qinx.faker.annotation.person.Name
 import dev.qinx.faker.enums.Locale
+import dev.qinx.faker.provider.Provider
+import dev.qinx.faker.provider.base.IntProvider
 import dev.qinx.faker.utils.SeedTester
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -66,9 +68,29 @@ class FakerSuite extends AnyFunSuite {
     new SeedTester[CompleteTestClass]()
   }
 
+  test("Faker singleton") {
+
+    Faker.array[TestName](1).foreach(println)
+    println(Faker.name())
+    println(Faker.localDate())
+
+    Faker.array[String](5).foreach(println)
+
+    val provider = new IntProvider
+    println(Faker.provide[Int](provider))
+
+    assert(Faker.provide[String](new MyProvider) === "haha")
+    assert(Faker.provide[String](new MyProvider) === "haha")
+  }
+
 }
 
 object FakerSuite {
+
+  class MyProvider extends Provider[String] {
+    println("instantiate my provider")
+    override def provide(): String = "haha"
+  }
 
   case class TestName(@Name(locale = Locale.zh_CN) chineseName: String,
                       @Name englishName: String,
@@ -95,4 +117,5 @@ object FakerSuite {
                                @DoubleType numeric: String,
                                @DoubleType numeric2: Double,
                                @LongType numeric3: Option[Long])
+
 }

@@ -76,6 +76,16 @@ fake.myClass1 foreach println
 case class MyClass2Bis(@ArrayType(length = 10) myClass1: Array[MyClass1])
 ```
 
+You can also generate fake data by using the `Faker` singleton:
+```scala
+import dev.qinx.faker.Faker
+
+Faker.name()
+Faker.localDate()
+Faker.array[String](5)
+Faker.array[MyClass1](5)
+``` 
+
 ## Available Annotations
 - base
   - `@IntType`
