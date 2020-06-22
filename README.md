@@ -28,39 +28,52 @@ This project does not have a stable release yet (maybe soon). To test faker, use
 ## Usage
 
 Just add *faker*'s annotations into a standard Scala case class and *faker* will handle the rest.
-
 ```scala
+import java.time.LocalTime
+
 import dev.qinx.faker.Faker
-import dev.qinx.faker.annotation.base.DoubleType
-import dev.qinx.faker.annotation.datetime.Date
+import dev.qinx.faker.annotation.base.{IntType, Text}
+import dev.qinx.faker.annotation.datetime.{Date, Time}
 import dev.qinx.faker.annotation.geo.{Lat, Lon}
 import dev.qinx.faker.annotation.person.Name
+import dev.qinx.faker.annotation.transport.Airport
 import dev.qinx.faker.enums.Locale
 
-case class Outer(@Date date: String,
-                 @Lat lat: Double,
-                 @Lon lon: Double,
-                 inner: Inner)
+case class MyClass1(@Date date: String,
+                    @Time time: LocalTime,
+                    @Airport(country = "FR") airportCode: String,
+                    @Name(locale = Locale.zh_CN) nameCN: String,
+                    @Text(pattern = "??-###") id: String,
+                    int1: Int,
+                    @IntType(seed = "123") int2: String,
+                    @IntType(min = 0, max = 10) int3: Int)
 
-case class Inner(@Name(locale = Locale.zh_CN) nameCN: String,
-                 @Name nameEN: String,
-                 inner2: Inner2)
+new Faker[MyClass1] get 10 foreach println
 
-case class Inner2(@DoubleType db: Option[Double])
+// MyClass1(2014-01-13,18:17:11,ORY,平磊,bm-250,-1501092464,1018954901,1)
+// MyClass1(2012-09-30,19:23:54,TLS,申秀芳,XK-741,-252380286,1295249578,9)
+// MyClass1(1994-05-22,03:27:26,ORY,敬桂英,VY-110,1097976093,-1829099982,9)
+// MyClass1(2008-02-02,03:09:18,ORY,苑波,YX-343,-43394488,1111887674,5)
+// MyClass1(1973-07-31,10:57:45,ORY,迟俊,ah-905,1558683535,-1621910390,7)
+// MyClass1(1984-04-09,04:24:45,BOD,芦秀珍,Uo-900,366140728,-1935747844,2)
+// MyClass1(2016-05-01,03:42:27,MRS,季兰英,qV-446,-995036697,696711130,7)
+// MyClass1(1977-10-08,10:04:50,MRS,荆红,pk-108,-1973051050,-1366603797,2)
+// MyClass1(1974-09-16,23:26:43,BOD,廖秀梅,He-851,-462826625,1149563170,5)
+// MyClass1(1981-04-19,08:03:33,BSL,韩超,hk-371,1977755351,1041944832,6)```
+```
 
-// fake it!
-new Faker[Outer].get(10).foreach(println)
+Faker can also handle array (the support of other collections are still a WIP)
+```scala
+case class MyClass2(myClass1: Array[MyClass1])
 
-//  Outer(1975-06-20,-55.54456619823381,105.7976149011921,Inner(劳英,Raymundo Wolf,Inner2(Some(0.6802689710914326))))
-//  Outer(2009-03-08,-80.47633383033715,117.74642116486496,Inner(闻畅,Kaia Howell,Inner2(Some(0.3232512987026902))))
-//  Outer(1978-06-30,-26.519165012672254,-141.75735542089546,Inner(盛玉华,Olevia Davis,Inner2(Some(0.06980875790105556))))
-//  Outer(1984-12-01,37.476895789699384,9.29234104256102,Inner(隆秀荣,Harden Fadel,Inner2(Some(0.02075769707758013))))
-//  Outer(1984-02-21,-31.894558633392776,42.324438019180974,Inner(戴峰,Colonel Wisozk,Inner2(Some(0.5647694196248825))))
-//  Outer(1972-02-08,-46.53325908319379,-70.96844656132821,Inner(伊军,Lexus Armstrong,Inner2(Some(0.17526148664772911))))
-//  Outer(1980-12-10,-36.11910484788625,18.959975300805013,Inner(明浩,Olga Bayer,Inner2(Some(0.23892571525946327))))
-//  Outer(2015-01-07,55.054814464224535,-168.0906165342038,Inner(简凤英,Marlin Macejkovic,Inner2(Some(0.6119473303637243))))
-//  Outer(1985-12-17,-25.288438631194964,-116.0055677254131,Inner(易磊,Bailey Goodwin,Inner2(Some(0.2013667637508989))))
-//  Outer(1990-02-28,78.71188964192572,69.35016034176547,Inner(赖小红,Hilmer Harber,Inner2(Some(0.10355297303863198))))
+val fake = new Faker[MyClass2].get()
+fake.myClass1 foreach println
+// MyClass1(1990-08-17,23:56:35,NCE,匡健,uE-846,838894708,1018954901,8)
+// MyClass1(1974-10-16,01:45:04,BSL,傅雪,ch-192,1582091789,1295249578,8)
+// MyClass1(1988-04-09,07:44:15,LYS,查雷,fx-476,1388926418,-1829099982,2)
+
+// By default Faker generate an array of length 3, you can adjust it by adding @ArrayType annotation
+case class MyClass2Bis(@ArrayType(length = 10) myClass1: Array[MyClass1])
 ```
 
 ## Available Annotations
