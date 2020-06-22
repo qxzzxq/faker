@@ -13,6 +13,21 @@ private[person] abstract class LocalNameProvider(val locale: Locale) extends Pro
   protected var _lastName: Boolean = true
   protected var _gender: Gender = Gender.All
 
+  def setFirstName(boolean: Boolean): this.type = {
+    _firstName = boolean
+    this
+  }
+
+  def setLastName(boolean: Boolean): this.type = {
+    _lastName = boolean
+    this
+  }
+
+  def setGender(gender: Gender): this.type = {
+    this._gender = gender
+    this
+  }
+
   protected val firstNamesMale: Array[String]
 
   protected val lastNames: Array[String]
@@ -63,9 +78,9 @@ private[person] abstract class LocalNameProvider(val locale: Locale) extends Pro
   }
 
   override def configure(annotation: Annotation): LocalNameProvider.this.type = {
-    _firstName = ReflectUtils.invokeAnnotationMethod[String](annotation, "firstName").toBoolean
-    _lastName = ReflectUtils.invokeAnnotationMethod[String](annotation, "lastName").toBoolean
-    _gender = ReflectUtils.invokeAnnotationMethod[Gender](annotation, "gender")
+    this.setFirstName(ReflectUtils.invokeAnnotationMethod[String](annotation, "firstName").toBoolean)
+    this.setLastName(ReflectUtils.invokeAnnotationMethod[String](annotation, "lastName").toBoolean)
+    this.setGender(ReflectUtils.invokeAnnotationMethod[Gender](annotation, "gender"))
     this.setSeed(annotation)
     this
   }
