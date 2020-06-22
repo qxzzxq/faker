@@ -12,11 +12,11 @@ import java.lang.annotation.Target;
  * Generate a string with each placeholder in pattern replaced according to the following rules:
  *
  * <ul>
+ *     <li>Number signs (‘#’) are replaced with a random digit from digits.</li>
  *     <li>Question marks (‘?’) are replaced with a random character from letters.</li>
  * </ul>
- * <p>
- * By default, letters contains all lowercase ASCII letters.</p>
- * <p>
+ *
+ * <p>By default, letters contains all lowercase ASCII letters and digits contains [0-9].
  * The default pattern is '<code>?</code>'</p>
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -26,7 +26,7 @@ public @interface LowerCase {
 
     String letters() default "abcdefghijklmnopqrstuvwxyz";
 
-    String digits() default "";
+    String digits() default "0123456789";
 
     String seed() default "";
 

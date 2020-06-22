@@ -12,12 +12,15 @@ import java.lang.annotation.Target;
  * Generate a string with each placeholder in pattern replaced according to the following rules:
  *
  * <ul>
+ *     <li>Number signs (‘#’) are replaced with a random digit from digits.</li>
  *     <li>Question marks (‘?’) are replaced with a random character from letters.</li>
  * </ul>
+ *
  * <p>
- * By default, letters contains all uppercase ASCII letters.</p>
- * <p>
- * The default pattern is '<code>?</code>'</p>
+ * By default, letters contains all uppercase ASCII letters and digits contains [0-9].
+ * The default pattern is '<code>?</code>'
+ * </p>
+ *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
@@ -26,7 +29,7 @@ public @interface UpperCase {
 
     String letters() default "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    String digits() default "";
+    String digits() default "0123456789";
 
     String seed() default "";
 
