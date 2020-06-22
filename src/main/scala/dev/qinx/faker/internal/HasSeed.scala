@@ -12,12 +12,13 @@ trait HasSeed {
   def hasSeed: Boolean = this.seed.nonEmpty
 
   def setSeed(seed: Long): this.type = {
-    this.seed = Some(seed)
-    this
+    this.setSeed(Some(seed))
   }
 
   def setSeed(seed: Option[Long]): this.type = {
-    this.seed = seed
+    if (seed != this.seed) {
+      this.seed = seed
+    }
     this
   }
 

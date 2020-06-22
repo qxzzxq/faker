@@ -25,4 +25,40 @@ private[faker] trait Logging {
     this.getClass.getName.stripSuffix("$")
   }
 
+  def debug(message: String): Unit = {
+    if (log.isDebugEnabled()) {
+      log.debug(message)
+    }
+  }
+
+  def trace(message: String): Unit = {
+    if (log.isTraceEnabled()) {
+      log.trace(message)
+    }
+  }
+
+  def info(message: String): Unit = {
+    if (log.isInfoEnabled()) {
+      log.info(message)
+    }
+  }
+
+  def warn(message: String): Unit = {
+    if (log.isWarnEnabled()) {
+      log.warn(message)
+    }
+  }
+
+  def error(message: String): Unit = {
+    if (log.isErrorEnabled()) {
+      log.error(message)
+    }
+  }
+
+  def fatal(message: String): Unit = {
+    if (log.isFatalEnabled()) {
+      log.fatal(message)
+    }
+  }
+
 }

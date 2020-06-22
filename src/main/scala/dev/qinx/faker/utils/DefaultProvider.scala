@@ -8,19 +8,19 @@ import dev.qinx.faker.provider.base._
 
 object DefaultProvider {
 
-  def of(obj: Class[_]): CanProvide = {
-    if (obj.equals(classOf[LocalDate])) return new datetime.LocalDateProvider()
-    if (obj.equals(classOf[String])) return new StringProvider()
-    if (obj.equals(classOf[Float])) return new FloatProvider()
-    if (obj.equals(classOf[Double])) return new DoubleProvider()
-    if (obj.equals(classOf[Int])) return new IntProvider()
-    if (obj.equals(classOf[Long])) return new LongProvider()
-    if (obj.equals(classOf[Boolean])) return new BooleanProvider()
-    if (obj.equals(classOf[Array[Byte]])) return new ByteArrayProvider()
-    if (obj.equals(classOf[Short])) return new ShortProvider()
-    if (obj.equals(classOf[Char])) return new CharProvider()
-    if (obj.isArray) return new ArrayProvider().setArrayType(obj)
-    new ClassProvider().setClass(obj)
+  def of(cls: Class[_]): CanProvide = {
+    if (cls.equals(classOf[LocalDate])) return new datetime.LocalDateProvider()
+    if (cls.equals(classOf[String])) return new StringProvider()
+    if (cls.equals(classOf[Float])) return new FloatProvider()
+    if (cls.equals(classOf[Double])) return new DoubleProvider()
+    if (cls.equals(classOf[Int])) return new IntProvider()
+    if (cls.equals(classOf[Long])) return new LongProvider()
+    if (cls.equals(classOf[Boolean])) return new BooleanProvider()
+    if (cls.equals(classOf[Array[Byte]])) return new ByteArrayProvider()
+    if (cls.equals(classOf[Short])) return new ShortProvider()
+    if (cls.equals(classOf[Char])) return new CharProvider()
+    if (cls.isArray) return new ArrayProvider().setArrayType(cls)
+    new ClassProvider().setClass(cls)
   }
 
 }

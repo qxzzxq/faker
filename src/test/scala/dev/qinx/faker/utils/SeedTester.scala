@@ -8,8 +8,10 @@ import scala.util.Random
 
 class SeedTester[T : ClassTag](times: Int = 100) {
 
-  val faker: Faker[T] = new Faker[T].setSeed(100)
-  val faker2: Faker[T] = new Faker[T].setSeed(100)
+  val seed: Long = Random.nextLong()
+
+  val faker: Faker[T] = new Faker[T].setSeed(seed)
+  val faker2: Faker[T] = new Faker[T].setSeed(seed)
   val faker3: Faker[T] = new Faker[T]
 
   (1 to times) foreach { _ =>

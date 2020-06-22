@@ -3,6 +3,7 @@ package dev.qinx.faker.provider.base
 import java.lang.annotation.Annotation
 import java.lang.reflect.Constructor
 
+import dev.qinx.faker.annotation.base.ArrayType
 import dev.qinx.faker.internal._
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.utils.{DefaultProvider, ReflectUtils}
@@ -37,27 +38,36 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
   /**
    * The list of provider for each parameter of the primary constructor.
    */
-  private[this] lazy val providers: mutable.LinkedHashMap[String, CanProvide] = this.getProviders
+  private[this] lazy val primaryConstructorArgProviders: mutable.LinkedHashMap[String, CanProvide] = this.getProviders
 
   /**
-   * For a given annotation,
+   * For a given annotation, invoke the method "provider" and instantiate it.
    *
    * @param annotation annotation that has the provider method
+   * @param paramType  class of parameter that has the annotation
    * @throws NoSuchMethodException cannot find the provider method in the annotation
    * @return an object of type CanProvide
    */
   @throws[NoSuchMethodException]
-  private[this] def getProviderFromAnnotation(annotation: Annotation): CanProvide = {
+  private[this] def getProviderFromAnnotation(annotation: Annotation, paramType: Class[_]): CanProvide = {
     val provider = ReflectUtils
       .invokeAnnotationMethod[Class[CanProvide]](annotation, "provider")
       .getDeclaredConstructor()
       .newInstance()
       .configure(annotation)
+
+    if (annotation.annotationType().equals(classOf[ArrayType])) {
+      debug("Find ArrayType provider, configure array type")
+      provider.asInstanceOf[ArrayProvider].setArrayType(paramType)
+    }
+
     provider
   }
 
   /**
-   * If a seed is set in Faker, then try to set the seed for the given provider if it has seed
+   * If a seed is set in Faker, then try to set the seed for the given provider if it has seed.
+   *
+   * This method will not override any existing seed of the provider.
    *
    * @param provider provider that we want to set seed to
    */
@@ -87,30 +97,37 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
   @throws[NoSuchElementException]("No provider could be found")
   @throws[NoSuchMethodException]
   private[this] def getProviders: mutable.LinkedHashMap[String, CanProvide] = {
-
     this.seed match {
-      case Some(seed) => log.info(s"Set seed to $seed")
+      case Some(seed) => info(s"Set class provider seed to $seed")
       case _ =>
     }
+    debug("Get constructor arg providers")
 
     val providers = new mutable.LinkedHashMap[String, CanProvide]()
 
-    primaryConstructor.getParameters.foreach { p =>
-      val annotation = p.getAnnotations.find { a =>
-        ReflectUtils.hasDeclaredMethod(a.annotationType(), "provider")
+    primaryConstructor.getParameters.foreach { param =>
+      val paramType = param.getType
+
+      //TODO handle multiple annotations: eg @Array @Name
+      val annotation = param.getAnnotations.find { anno =>
+        ReflectUtils.hasDeclaredMethod(anno.annotationType(), "provider")
       }
 
       val provider = annotation match {
         case Some(anno) =>
-          log.debug(s"Set ${anno.annotationType().getSimpleName} provider for the field ${p.getName}: ${p.getType.getCanonicalName}")
-          getProviderFromAnnotation(anno)
+          debug(
+            s"Set ${anno.annotationType().getSimpleName} provider for the field " +
+              s"${param.getName}: ${paramType.getCanonicalName}"
+          )
+          getProviderFromAnnotation(anno, paramType)
+
         case _ =>
-          log.debug(s"Set default provider for the field ${p.getName}: ${p.getType.getCanonicalName}")
-          DefaultProvider.of(p.getType)
+          debug(s"Set default provider for the field ${param.getName}: ${paramType.getCanonicalName}")
+          DefaultProvider.of(paramType)
       }
 
       setSeedOfProvider(provider)
-      providers.put(p.getName, provider)
+      providers.put(param.getName, provider)
     }
 
     providers
@@ -122,21 +139,19 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
    * @return an array of Object
    */
   private[this] def getInitArgs: Array[Object] = {
+    trace("Fake constructor arguments")
     primaryConstructor.getParameters.map { param =>
       val paramType = param.getType
-      val provider = providers.getOrElse(param.getName, throw new NoSuchElementException(s"Cannot find provider of type ${param.getType}"))
+      val provider = primaryConstructorArgProviders
+        .getOrElse(param.getName, throw new NoSuchElementException(s"Cannot find provider of type ${param.getType}"))
 
-      if (log.isTraceEnabled()) {
-        log.trace(s"Generate fake data for ${param.getName}")
-      }
+      trace(s"Fake data for parameter ${param.getName}")
 
       val fakeData = provider.provide()
       val fakeDataCls: Class[_] = fakeData.getClass
       val paramCls: Class[_] = ReflectUtils.getClassOf(paramType)
 
-      if (log.isTraceEnabled()) {
-        log.trace(s"param: ${param.getName}, paramType: ${paramType.getCanonicalName}, fakeData class: ${fakeDataCls.getCanonicalName}")
-      }
+      trace(s"param: ${param.getName}, paramType: ${paramType.getCanonicalName}, fakeData class: ${fakeDataCls.getCanonicalName}")
 
       if (paramCls.isAssignableFrom(fakeDataCls)) {
         fakeData.asInstanceOf[Object]
