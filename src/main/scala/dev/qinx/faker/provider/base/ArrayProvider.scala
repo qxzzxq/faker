@@ -8,14 +8,33 @@ import dev.qinx.faker.utils.{DefaultProvider, ReflectUtils}
 
 class ArrayProvider extends Provider[Object] with Logging with HasSeed {
 
-  private[this] var provider: Option[CanProvide] = None
-  private[this] var clsName: Option[Class[_]] = None
+  private[this] var provider: Option[CanProvide[_]] = None
+  private[this] var componentType: Option[Class[_]] = None
   private[this] var length: Int = 3
 
-  def setArrayType(cls: Class[_]): this.type = {
-    debug(s"Set ${cls.getCanonicalName} to array provider")
-    this.clsName = Option(cls)
-    this.provider = Option(DefaultProvider.of(cls.getComponentType))
+  /**
+   * Set the provider of the component of the array
+   * @param provider a provider that can provide the array component
+   * @return
+   */
+  def setProvider(provider: CanProvide[_]): this.type = {
+    debug(s"Set array component provider ${provider.getClass.getCanonicalName}")
+    this.provider = Option(provider)
+    this
+  }
+
+  /**
+   * Set the component type of this array provider. If no provider was set before calling this method, it will
+   * set the default provider. Otherwise, it won't override the existing provider
+   * @param componentType class of the component
+   * @return
+   */
+  def setComponentType(componentType: Class[_]): this.type = {
+    debug(s"Set array type to ${componentType.getCanonicalName}")
+    this.componentType = Option(componentType)
+    if (provider.isEmpty) {
+      this.provider = Option(DefaultProvider.of(componentType))
+    }
     this
   }
 
@@ -40,11 +59,11 @@ class ArrayProvider extends Provider[Object] with Logging with HasSeed {
 
   override def provide(): Object = {
 
-    require(clsName.isDefined, "The array type is not set, set it with setArrayType()")
+    require(componentType.isDefined, "The array type is not set, set it with setComponentType()")
     require(provider.isDefined, "No component provider is set")
-    trace(s"This array provider will provide $length instances of ${clsName.get.getComponentType}")
+    trace(s"This array provider will provide $length instances of ${componentType.get}")
 
-    val arr = java.lang.reflect.Array.newInstance(clsName.get.getComponentType, length)
+    val arr = java.lang.reflect.Array.newInstance(componentType.get, length)
     (0 until length).foreach {i =>
       java.lang.reflect.Array.set(arr, i, provider.get.provide())
     }

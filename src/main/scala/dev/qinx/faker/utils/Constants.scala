@@ -1,5 +1,7 @@
 package dev.qinx.faker.utils
 
+import dev.qinx.faker.annotation.base.ArrayType
+
 private[faker] object Constants {
   val PACKAGE: String = "dev.qinx.faker"
   val PROVIDER_PACKAGE: String = s"$PACKAGE.provider"
@@ -7,4 +9,8 @@ private[faker] object Constants {
   val GEO_PROVIDER_PACKAGE: String = s"$PROVIDER_PACKAGE.geo"
 
   val RESOURCE_DATA: String = "data"
+
+  val COLLECTION_PROVIDERS: Array[String] = Array(
+    classOf[ArrayType].getCanonicalName
+  )
 }

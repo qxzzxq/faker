@@ -3,10 +3,9 @@ package dev.qinx.faker.provider.base
 import java.lang.annotation.Annotation
 import java.lang.reflect.Constructor
 
-import dev.qinx.faker.annotation.base.ArrayType
 import dev.qinx.faker.internal._
 import dev.qinx.faker.provider.Provider
-import dev.qinx.faker.utils.{DefaultProvider, ReflectUtils}
+import dev.qinx.faker.utils.{Constants, DefaultProvider, ReflectUtils}
 
 import scala.collection.mutable
 
@@ -38,30 +37,66 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
   /**
    * The list of provider for each parameter of the primary constructor.
    */
-  private[this] lazy val primaryConstructorArgProviders: mutable.LinkedHashMap[String, CanProvide] = this.getProviders
+  private[this] lazy val primaryConstructorArgProviders: mutable.LinkedHashMap[String, CanProvide[_]] = this.getProviders
 
   /**
-   * For a given annotation, invoke the method "provider" and instantiate it.
+   * For a given annotations, invoke the method "provider" and instantiate it.
    *
-   * @param annotation annotation that has the provider method
-   * @param paramType  class of parameter that has the annotation
-   * @throws NoSuchMethodException cannot find the provider method in the annotation
+   * @param annotations annotations that has the provider method
+   * @param paramType   class of parameter that has the annotations
+   * @throws NoSuchMethodException cannot find the provider method in the annotations
    * @return an object of type CanProvide
    */
   @throws[NoSuchMethodException]
-  private[this] def getProviderFromAnnotation(annotation: Annotation, paramType: Class[_]): CanProvide = {
-    val provider = ReflectUtils
-      .invokeAnnotationMethod[Class[CanProvide]](annotation, "provider")
+  private[this] def getProviderFromAnnotation(annotations: Array[Annotation], paramType: Class[_]): CanProvide[_] = {
+    var providerAnnotation: Option[Annotation] = None
+    var componentAnnotation: Option[Annotation] = None
+
+    annotations.length match {
+      case 1 =>
+        providerAnnotation = Some(annotations.head)
+
+      case 2 =>
+
+        annotations.foreach { a =>
+          if (Constants.COLLECTION_PROVIDERS.contains(a.annotationType().getCanonicalName)) {
+            providerAnnotation = Option(a)
+          } else {
+            componentAnnotation = Option(a)
+          }
+        }
+
+        require(providerAnnotation.isDefined && componentAnnotation.isDefined,
+          "When there are two provider annotations, one must be a collection provider " +
+            "and the other one must be an element provider.")
+
+      case _ => throw new IllegalArgumentException("Cannot handle more than two provider annotations")
+    }
+
+    val paramProvider = newInstanceOfProvider(providerAnnotation.get)
+
+    paramProvider match {
+      case provider: ArrayProvider =>
+        debug("Find ArrayType provider, configure array type")
+
+        if (componentAnnotation.isDefined) {
+          val componentProvider = newInstanceOfProvider(componentAnnotation.get)
+          debug(s"Set user defined ${componentProvider.getClass.getCanonicalName} to the array provider")
+          provider.setProvider(componentProvider)
+        }
+        provider.setComponentType(paramType.getComponentType)
+      case _ =>
+    }
+
+    paramProvider
+  }
+
+  private[this] def newInstanceOfProvider(annotation: Annotation): CanProvide[_] = {
+    ReflectUtils
+      .invokeAnnotationMethod[Class[CanProvide[_]]](annotation, "provider")
       .getDeclaredConstructor()
       .newInstance()
       .configure(annotation)
-
-    if (annotation.annotationType().equals(classOf[ArrayType])) {
-      debug("Find ArrayType provider, configure array type")
-      provider.asInstanceOf[ArrayProvider].setArrayType(paramType)
-    }
-
-    provider
   }
 
   /**
@@ -71,7 +106,7 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
    *
    * @param provider provider that we want to set seed to
    */
-  private[this] def setSeedOfProvider(provider: CanProvide): Unit = {
+  private[this] def setSeedOfProvider(provider: CanProvide[_]): Unit = {
     this.seed match {
       case Some(seed) =>
         // set seed only if the provider inherits the HasSeed trait
@@ -96,34 +131,28 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
    */
   @throws[NoSuchElementException]("No provider could be found")
   @throws[NoSuchMethodException]
-  private[this] def getProviders: mutable.LinkedHashMap[String, CanProvide] = {
+  private[this] def getProviders: mutable.LinkedHashMap[String, CanProvide[_]] = {
     this.seed match {
       case Some(seed) => info(s"Set class provider seed to $seed")
       case _ =>
     }
     debug("Get constructor arg providers")
 
-    val providers = new mutable.LinkedHashMap[String, CanProvide]()
+    val providers = new mutable.LinkedHashMap[String, CanProvide[_]]()
 
     primaryConstructor.getParameters.foreach { param =>
       val paramType = param.getType
 
-      //TODO handle multiple annotations: eg @Array @Name
-      val annotation = param.getAnnotations.find { anno =>
+      val annotation = param.getAnnotations.filter { anno =>
         ReflectUtils.hasDeclaredMethod(anno.annotationType(), "provider")
       }
 
-      val provider = annotation match {
-        case Some(anno) =>
-          debug(
-            s"Set ${anno.annotationType().getSimpleName} provider for the field " +
-              s"${param.getName}: ${paramType.getCanonicalName}"
-          )
-          getProviderFromAnnotation(anno, paramType)
-
-        case _ =>
-          debug(s"Set default provider for the field ${param.getName}: ${paramType.getCanonicalName}")
-          DefaultProvider.of(paramType)
+      val provider = if (annotation.isEmpty) {
+        debug(s"Set default provider for the field ${param.getName}: ${paramType.getCanonicalName}")
+        DefaultProvider.of(paramType)
+      } else {
+        debug(s"Set provider from annotation for the field ${param.getName}: ${paramType.getCanonicalName}")
+        getProviderFromAnnotation(annotation, paramType)
       }
 
       setSeedOfProvider(provider)

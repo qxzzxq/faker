@@ -99,12 +99,11 @@ object Faker extends Logging {
 
   def array[T](length: Int)(implicit classTag: ClassTag[T]): Array[T] = {
     val providerID = s"${classTag.runtimeClass.getCanonicalName}${length}ArrayProvider"
-    val arrayType = java.lang.reflect.Array.newInstance(classTag.runtimeClass,0)
 
     provide[Object](providerID) { id =>
       new ArrayProvider()
         .setProviderID(id)
-        .setArrayType(arrayType.getClass)
+        .setComponentType(classTag.runtimeClass)
         .setLength(length)
         .setSeed(seed)
     }.asInstanceOf[Array[T]]

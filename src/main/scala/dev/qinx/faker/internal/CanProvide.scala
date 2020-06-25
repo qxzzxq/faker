@@ -2,9 +2,7 @@ package dev.qinx.faker.internal
 
 import java.lang.annotation.Annotation
 
-trait CanProvide {
-
-  type T
+trait CanProvide[T] {
 
   def provide(): T
 

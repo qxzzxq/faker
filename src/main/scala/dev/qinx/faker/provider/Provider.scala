@@ -4,7 +4,7 @@ import java.util.UUID
 
 import dev.qinx.faker.internal.CanProvide
 
-abstract class Provider[ProvidedT] extends CanProvide {
+abstract class Provider[ProvidedT] extends CanProvide[ProvidedT] {
   private[this] var _providerID: String = UUID.randomUUID().toString
 
   private[faker] def providerID: String = _providerID
@@ -13,6 +13,4 @@ abstract class Provider[ProvidedT] extends CanProvide {
     this._providerID = id
     this
   }
-
-  override type T = ProvidedT
 }
