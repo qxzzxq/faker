@@ -52,7 +52,7 @@ class ArrayProvider extends Provider[Object] with HasComponent with HasSeed {
   }
 
   override def configure(annotation: Annotation): ArrayProvider.this.type = {
-    this.setLength(ReflectUtils.invokeAnnotationMethod[Int](annotation, "totalLength"))
+    this.setLength(ReflectUtils.invokeAnnotationMethod[Int](annotation, "length"))
     val s = getSeedFromAnnotation(annotation)
     if (s.isDefined) {
       this.setSeed(s)
