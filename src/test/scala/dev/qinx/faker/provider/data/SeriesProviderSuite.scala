@@ -83,13 +83,14 @@ class SeriesProviderSuite extends AnyFunSuite {
 //    new SeedTester[Test7]()
 //    new SeedTester[Test8]()
 
-
     val faker1 = new Faker[Test10]
     val faker2 = new Faker[Test10]
     assert(faker1.getDataSeries.sameElements(faker2.getDataSeries))
     println("----------")
     val faker11A = new Faker[Test11]
     val faker11B = new Faker[Test11]
+    println(faker11A.get)
+    println(faker11B.get)
     assert(faker11A.getDataSeries.sameElements(faker11B.getDataSeries))
 
   }

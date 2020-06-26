@@ -28,6 +28,7 @@ trait HasComponent extends Logging {
     debug(s"Set component type to ${componentType.getCanonicalName}")
     this.componentType = Option(componentType)
     if (componentProvider.isEmpty) {
+      debug("Use default provider as the component provider")
       this.setComponentProvider(DefaultProvider.of(componentType))
     }
     this

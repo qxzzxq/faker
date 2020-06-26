@@ -151,10 +151,9 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
         debug("Find Series provider, configure component type")
 
         if (!provider.hasData) {
-          debug("Set data to series provider")
           if (componentAnnotation.isDefined) {
             val componentProvider = newInstanceOfProvider(componentAnnotation.get)
-            debug(s"Set user defined provider to the series provider")
+            debug(s"Set user defined provider as the series' component provider")
             provider.setComponentProvider(componentProvider)
           }
 
@@ -187,10 +186,7 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
       case Some(seed) =>
         // set seed only if the provider inherits the HasSeed trait
         if (classOf[HasSeed].isAssignableFrom(provider.getClass)) {
-          if (log.isTraceEnabled()) {
-            log.trace(s"${provider.getClass.getCanonicalName} can have seed")
-          }
-
+          trace(s"${provider.getClass.getCanonicalName} can have seed")
           // Do not override the existing seed
           if (!provider.asInstanceOf[HasSeed].hasSeed) {
             provider.asInstanceOf[HasSeed].setSeed(seed)
@@ -209,7 +205,7 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
   @throws[NoSuchMethodException]
   private[this] def getProviders: mutable.LinkedHashMap[String, CanProvide[_]] = {
     this.seed match {
-      case Some(seed) => info(s"Set class provider seed to $seed")
+      case Some(seed) => info(s"Class provider seed was set to $seed")
       case _ =>
     }
     debug("Get constructor arg providers")

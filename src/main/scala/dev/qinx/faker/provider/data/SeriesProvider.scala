@@ -81,11 +81,13 @@ class SeriesProvider
 
   override def setComponentType(componentType: Class[_]): SeriesProvider.this.type = {
     super.setComponentType(componentType)
+
+    //TODO fix faker.setSeed()
     this.updateSeedOfComponentProvider()
 
     // initialize data
     require(this.componentProvider.isDefined, "No component provider")
-    val set: mutable.HashSet[Any] = mutable.HashSet[Any]() // to remove duplicated data
+    val set: mutable.LinkedHashSet[Any] = mutable.LinkedHashSet[Any]() // to remove duplicated data
     while (set.size < this._dataLength) {
       set.add(this.componentProvider.get.provide())
     }
@@ -142,7 +144,6 @@ class SeriesProvider
    * @return
    */
   def setData(data: Array[_]): this.type = {
-    debug("Set data to series provider")
     this.data = data.asInstanceOf[Array[Object]]
     this
   }
@@ -205,9 +206,11 @@ class SeriesProvider
    */
   private[this] def updateSeedOfComponentProvider(): Unit = {
     require(componentProvider.isDefined, "No component provider is set")
+    trace("Update seed of component provider")
 
     if (classOf[HasSeed].isAssignableFrom(this.componentProvider.get.getClass) && !componentProviderSeedUpdated.getAndSet(true)) {
       val p = this.componentProvider.get.asInstanceOf[HasSeed]
+
       if (this.hasSeed && !p.hasSeed) {
         debug("Override component provider seed")
         p.setSeed(this.seed)
