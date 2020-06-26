@@ -39,7 +39,27 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
   /**
    * The list of provider for each parameter of the primary constructor.
    */
-  private[this] lazy val primaryConstructorArgProviders: mutable.LinkedHashMap[String, CanProvide[_]] = this.getProviders
+  private[this] lazy val primaryConstructorArgProviders: mutable.LinkedHashMap[String, CanProvide[_]] = {
+    val providers = this.getProviders
+
+    // handle series cross join
+    providers.foreach { case (_, provider) =>
+      provider match {
+        case sp: SeriesProvider =>
+          sp.getCrossJoinTargetName match {
+            case Some(paramN) =>
+              val crossJoinTarget = providers.getOrElse(paramN, throw new NoSuchElementException(s"No provider can be found for parameter $paramN"))
+              require(crossJoinTarget.isInstanceOf[SeriesProvider], "The cross join target field must also be a serie")
+              sp.crossJoinWith(crossJoinTarget.asInstanceOf[SeriesProvider])
+            case _ =>
+          }
+
+        case _ =>
+      }
+    }
+
+    providers
+  }
 
   /**
    * For a given annotations, invoke the method "provider" and instantiate it.

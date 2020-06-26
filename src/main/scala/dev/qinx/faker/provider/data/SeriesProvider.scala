@@ -11,9 +11,11 @@ import dev.qinx.faker.utils.ReflectUtils
 import scala.collection.mutable
 
 /**
- * A series provider will provide sequentially and iteratively each element of its inner list of data
+ * A series provider will provide sequentially and iteratively each element of its inner list of data.
  *
- * for example, with data Array(1, 2, 3), if repetition equals 1, then
+ * For example, with data {{{Array(1, 2, 3)}}}
+ *
+ * if repetition equals 1, then
  * {{{
  *   seriesProvider.provide()  // 1
  *   seriesProvider.provide()  // 2
@@ -142,10 +144,12 @@ class SeriesProvider extends Provider[Object] with HasComponent {
     this._dataLength = ReflectUtils.invokeAnnotationMethod[Int](annotation, "length")
 
     if (crossJoinTargetName != "") {
+      debug(s"Set cross join target name: $crossJoinTargetName")
       this._crossJoinTargetName = Option(crossJoinTargetName)
     }
 
     if (seriesId != "") {
+      debug(s"Set series id: $seriesId")
       this.setData(Faker.getSeries(seriesId))
     }
 
