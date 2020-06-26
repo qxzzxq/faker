@@ -143,7 +143,7 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
         if (componentAnnotation.isDefined) {
           val componentProvider = newInstanceOfProvider(componentAnnotation.get)
           debug(s"Set user defined provider to the array provider")
-          provider.setProvider(componentProvider)
+          provider.setComponentProvider(componentProvider)
         }
         provider.setComponentType(paramType.getComponentType)
 
@@ -155,7 +155,7 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
           if (componentAnnotation.isDefined) {
             val componentProvider = newInstanceOfProvider(componentAnnotation.get)
             debug(s"Set user defined provider to the series provider")
-            provider.setProvider(componentProvider)
+            provider.setComponentProvider(componentProvider)
           }
 
           provider.setComponentType(paramType)
@@ -247,8 +247,7 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
     trace("Fake constructor arguments")
     primaryConstructor.getParameters.map { param =>
       val paramType = param.getType
-      val provider = primaryConstructorArgProviders
-        .getOrElse(param.getName, throw new NoSuchElementException(s"Cannot find provider of type ${param.getType}"))
+      val provider = primaryConstructorArgProviders.getOrElse(param.getName, throw new NoSuchElementException(s"Cannot find provider of type ${param.getType}"))
 
       trace(s"Fake data for parameter ${param.getName}")
 

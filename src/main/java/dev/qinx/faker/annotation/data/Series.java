@@ -15,6 +15,6 @@ public @interface Series {
     String id() default "";
     int length() default 3;
     String crossJoin() default "";
-
+    String seed() default "";
     Class<? extends CanProvide> provider() default SeriesProvider.class;
 }

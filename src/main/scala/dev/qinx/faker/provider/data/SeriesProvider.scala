@@ -1,10 +1,10 @@
 package dev.qinx.faker.provider.data
 
 import java.lang.annotation.Annotation
-import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger}
 
 import dev.qinx.faker.Faker
-import dev.qinx.faker.internal.{HasComponent, HasOption, HasString}
+import dev.qinx.faker.internal.{HasComponent, HasOption, HasSeed, HasString}
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.utils.ReflectUtils
 
@@ -35,7 +35,12 @@ import scala.collection.mutable
  *   ...
  * }}}
  */
-class SeriesProvider extends Provider[Object] with HasComponent with HasString with HasOption[Object] {
+class SeriesProvider
+  extends Provider[Object]
+    with HasComponent
+    with HasString
+    with HasOption[Object]
+    with HasSeed {
 
   /**
    * Times of repetition of each element
@@ -56,6 +61,9 @@ class SeriesProvider extends Provider[Object] with HasComponent with HasString w
   private[this] var _crossJoinTargetName: Option[String] = None
   private var _crossJoinTarget: Option[SeriesProvider] = None
 
+  private[this] val componentProviderSeedUpdated: AtomicBoolean = new AtomicBoolean(false)
+
+
   override def provide(): Object = {
     val output = data(index.get())
 
@@ -73,12 +81,13 @@ class SeriesProvider extends Provider[Object] with HasComponent with HasString w
 
   override def setComponentType(componentType: Class[_]): SeriesProvider.this.type = {
     super.setComponentType(componentType)
+    this.updateSeedOfComponentProvider()
 
     // initialize data
-    require(this.provider.isDefined, "No component provider")
-    val set: mutable.HashSet[Any] = mutable.HashSet[Any]()  // to remove duplicated data
+    require(this.componentProvider.isDefined, "No component provider")
+    val set: mutable.HashSet[Any] = mutable.HashSet[Any]() // to remove duplicated data
     while (set.size < this._dataLength) {
-      set.add(this.provider.get.provide())
+      set.add(this.componentProvider.get.provide())
     }
 
     this.setData(set.toArray)
@@ -89,12 +98,14 @@ class SeriesProvider extends Provider[Object] with HasComponent with HasString w
 
   /**
    * Times of repetition of each element in data
+   *
    * @return
    */
   def repetition: Int = this.rep
 
   /**
    * Length of the inside data array
+   *
    * @return
    */
   def dataLength: Int = this.data.length
@@ -104,10 +115,17 @@ class SeriesProvider extends Provider[Object] with HasComponent with HasString w
    * {{{
    *   repetition * data_length
    * }}}
+   *
    * @return
    */
   def totalLength: Int = this.repetition * this.dataLength
 
+  /**
+   * Update the repetition of this series provider and its cross join target's (if exists) repetition.
+   *
+   * The new repetition will be {{{old_rep * new_rep}}}
+   * @param rep new repetition to be set
+   */
   def updateRepetition(rep: Int): Unit = {
     trace(s"Update repetition from ${this.rep} to ${rep * this.rep}")
     this.rep = rep * this.rep
@@ -119,7 +137,8 @@ class SeriesProvider extends Provider[Object] with HasComponent with HasString w
 
   /**
    * Set the data of this series provider to the given array
-   * @param data
+   *
+   * @param data data to be used in the series provider
    * @return
    */
   def setData(data: Array[_]): this.type = {
@@ -132,6 +151,7 @@ class SeriesProvider extends Provider[Object] with HasComponent with HasString w
 
   /**
    * Return true if this series provider has a defined cross join target
+   *
    * @return
    */
   def hasCrossJoinTarget: Boolean = {
@@ -149,6 +169,10 @@ class SeriesProvider extends Provider[Object] with HasComponent with HasString w
     val seriesId = ReflectUtils.invokeAnnotationMethod[String](annotation, "id")
     val crossJoinTargetName = ReflectUtils.invokeAnnotationMethod[String](annotation, "crossJoin")
     this._dataLength = ReflectUtils.invokeAnnotationMethod[Int](annotation, "length")
+    val s = getSeedFromAnnotation(annotation)
+    if (s.isDefined) {
+      this.setSeed(s)
+    }
 
     if (crossJoinTargetName != "") {
       debug(s"Set cross join target name: $crossJoinTargetName")
@@ -173,5 +197,23 @@ class SeriesProvider extends Provider[Object] with HasComponent with HasString w
   override def provideOption: Option[Object] = this._option match {
     case Some(o) => o
     case _ => throw new NoSuchElementException("The method provide() should be invoked before provideOption()")
+  }
+
+  /**
+   * Check if this array provider has seed. If true then try to update the seed of the component provider.
+   * But if the component provider already has a seed, then we skip the updating
+   */
+  private[this] def updateSeedOfComponentProvider(): Unit = {
+    require(componentProvider.isDefined, "No component provider is set")
+
+    if (classOf[HasSeed].isAssignableFrom(this.componentProvider.get.getClass) && !componentProviderSeedUpdated.getAndSet(true)) {
+      val p = this.componentProvider.get.asInstanceOf[HasSeed]
+      if (this.hasSeed && !p.hasSeed) {
+        debug("Override component provider seed")
+        p.setSeed(this.seed)
+      } else {
+        debug("Component provider already has a seed, do not override")
+      }
+    }
   }
 }
