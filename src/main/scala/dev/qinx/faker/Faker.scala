@@ -37,6 +37,24 @@ class Faker[T: ClassTag](val locale: Locale) extends HasSeed with Logging {
   def get(length: Long): Seq[T] = (1L to length).map(_ => get())
 
   /**
+   * If the data has one or more series annotation, then return a seq with the minimum length that contains
+   * all the unique series element combination
+   * @return
+   */
+  def getDataSeries: Seq[T] = {
+    val first = get()  // instantiate lazy variables
+    val l = classProvider.getDataSeriesLength
+
+    if (l != 0) {
+      info(s"Get data series of length $l")
+      first +: get(l - 1)
+    } else {
+      warn("The current case class cannot be provided as a data series")
+      Seq()
+    }
+  }
+
+  /**
    * Set seed for Faker. This seed will be applied to providers if no seed can be found in the annotation.
    * In other word, seed set in annotation arguments will override this seed.
    *

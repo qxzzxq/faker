@@ -9,11 +9,13 @@ import dev.qinx.faker.provider.collection.ArrayProvider
 import dev.qinx.faker.provider.data.SeriesProvider
 import dev.qinx.faker.utils.{Constants, DefaultProvider, ReflectUtils}
 
+import scala.annotation.tailrec
 import scala.collection.mutable
 
 class ClassProvider extends Provider[Object] with Logging with HasSeed {
 
   private[this] var cls: Option[Class[_]] = None
+  private[this] val length: mutable.HashSet[Int] = new mutable.HashSet[Int]()
 
   def setClass(cls: Class[_]): this.type = {
     this.cls = Option(cls)
@@ -43,22 +45,59 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
     val providers = this.getProviders
 
     // handle series cross join
-    providers.foreach { case (_, provider) =>
+    providers.foreach { case (fromParam, provider) =>
+
       provider match {
         case sp: SeriesProvider =>
           sp.getCrossJoinTargetName match {
-            case Some(paramN) =>
-              val crossJoinTarget = providers.getOrElse(paramN, throw new NoSuchElementException(s"No provider can be found for parameter $paramN"))
-              require(crossJoinTarget.isInstanceOf[SeriesProvider], "The cross join target field must also be a serie")
+            case Some(toParam) =>
+              val crossJoinTarget = providers.getOrElse(toParam, throw new NoSuchElementException(s"No such field: $toParam"))
+              require(crossJoinTarget.isInstanceOf[SeriesProvider], "The cross join target field must also be a series")
+              debug(s"Cross join $fromParam -> $toParam")
               sp.crossJoinWith(crossJoinTarget.asInstanceOf[SeriesProvider])
             case _ =>
           }
+        case _ =>
+      }
+    }
 
+    // update total length of if this class provider can provide a series
+    providers.foreach { case (_, provider) =>
+      provider match {
+        case sp: SeriesProvider => if (!sp.hasCrossJoinTarget) this.length.add(sp.totalLength)
         case _ =>
       }
     }
 
     providers
+  }
+
+  def getDataSeriesLength: Int = {
+    debug("Calculate data series length")
+
+    this.length.size match {
+      case 0 => 0
+      case 1 => this.length.head
+      case _ =>
+        val arr = this.length.toArray.sorted
+        leastCommonMultiplier(arr.head, arr.tail)
+    }
+  }
+
+  @tailrec
+  private[this] def leastCommonMultiplier(e: Int, arr: Array[Int]): Int = {
+    if (arr.length == 1) {
+      val high = Math.max(e, arr(0))
+      val low = Math.min(e, arr(0))
+
+      var lcm = high
+      while (lcm % low != 0) {
+        lcm += high
+      }
+      lcm
+    } else {
+      leastCommonMultiplier(arr.head, arr.tail)
+    }
   }
 
   /**

@@ -86,6 +86,45 @@ Faker.array[String](5)
 Faker.array[MyClass1](5)
 ``` 
 
+It's also possible to cross join one field to another, in such a use case, use `@Series` annotation
+```scala
+case class CrossJoinExample(@Series(length = 2) @Date date: String,
+                            @Series(length = 3, crossJoin = "date") @Text(pattern = "??-###") id: String,
+                            @Series(id = "myInput", crossJoin = "id") name: String,
+                            @FloatType(min = 10, max = 20) price: Float)
+
+val faker = new Faker[CrossJoinExample]
+faker.putSeries("myInput", Array("apple", "banana", "orange"))
+
+import spark.implicits._  // to visualize as a spark dataset
+faker.getDataSeries.toDS().show()
+// +----------+------+------+---------+
+// |      date|    id|  name|    price|
+// +----------+------+------+---------+
+// |1984-11-13|ym-025| apple|15.212642|
+// |1984-11-13|ym-025|banana|17.103207|
+// |1984-11-13|ym-025|orange|17.610806|
+// |1984-11-13|eN-286| apple|11.953639|
+// |1984-11-13|eN-286|banana|10.136742|
+// |1984-11-13|eN-286|orange|12.635193|
+// |1984-11-13|wA-500| apple| 12.24368|
+// |1984-11-13|wA-500|banana|16.292076|
+// |1984-11-13|wA-500|orange|15.748799|
+// |1980-09-04|ym-025| apple| 16.94527|
+// |1980-09-04|ym-025|banana| 18.91407|
+// |1980-09-04|ym-025|orange|11.317879|
+// |1980-09-04|eN-286| apple|19.948784|
+// |1980-09-04|eN-286|banana|14.381845|
+// |1980-09-04|eN-286|orange|16.428938|
+// |1980-09-04|wA-500| apple|19.262041|
+// |1980-09-04|wA-500|banana|10.533231|
+// |1980-09-04|wA-500|orange|19.337175|
+// +----------+------+------+---------+
+```
+
+
+
+
 ## Available Annotations
 - base
   - `@IntType`

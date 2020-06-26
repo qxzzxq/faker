@@ -4,7 +4,7 @@ import java.lang.annotation.Annotation
 import java.util.concurrent.atomic.AtomicInteger
 
 import dev.qinx.faker.Faker
-import dev.qinx.faker.internal.HasComponent
+import dev.qinx.faker.internal.{HasComponent, HasOption, HasString}
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.utils.ReflectUtils
 
@@ -35,7 +35,7 @@ import scala.collection.mutable
  *   ...
  * }}}
  */
-class SeriesProvider extends Provider[Object] with HasComponent {
+class SeriesProvider extends Provider[Object] with HasComponent with HasString with HasOption[Object] {
 
   /**
    * Times of repetition of each element
@@ -44,6 +44,8 @@ class SeriesProvider extends Provider[Object] with HasComponent {
   private[this] val counter: AtomicInteger = new AtomicInteger(0)
   private[this] val index: AtomicInteger = new AtomicInteger(0)
 
+  private[this] var _string: Option[String] = None
+  private[this] var _option: Option[Option[Object]] = None
   /**
    * length of data to be used in series data generation when only a component provider is given instead of data,
    * this value should only be set with the value of "length" in a @Series annotation
@@ -56,6 +58,10 @@ class SeriesProvider extends Provider[Object] with HasComponent {
 
   override def provide(): Object = {
     val output = data(index.get())
+
+    this._string = Option(output.toString)
+    this._option = Option(Option(output.asInstanceOf[Object]))
+
     counter.getAndIncrement()
 
     if (counter.compareAndSet(rep, 0)) {
@@ -103,6 +109,7 @@ class SeriesProvider extends Provider[Object] with HasComponent {
   def totalLength: Int = this.repetition * this.dataLength
 
   def updateRepetition(rep: Int): Unit = {
+    trace(s"Update repetition from ${this.rep} to ${rep * this.rep}")
     this.rep = rep * this.rep
 
     if (hasCrossJoinTarget) {
@@ -156,4 +163,15 @@ class SeriesProvider extends Provider[Object] with HasComponent {
     this
   }
 
+  override def provideString: String = {
+    this._string match {
+      case Some(s) => s
+      case _ => throw new NoSuchElementException("The method provide() should be invoked before provideString()")
+    }
+  }
+
+  override def provideOption: Option[Object] = this._option match {
+    case Some(o) => o
+    case _ => throw new NoSuchElementException("The method provide() should be invoked before provideOption()")
+  }
 }
