@@ -72,7 +72,7 @@ fake.myClass1 foreach println
 // MyClass1(1974-10-16,01:45:04,BSL,傅雪,ch-192,1582091789,1295249578,8)
 // MyClass1(1988-04-09,07:44:15,LYS,查雷,fx-476,1388926418,-1829099982,2)
 
-// By default Faker generate an array of length 3, you can adjust it by adding @ArrayType annotation
+// By default Faker generate an array of totalLength 3, you can adjust it by adding @ArrayType annotation
 case class MyClass2Bis(@ArrayType(length = 10) myClass1: Array[MyClass1])
 ```
 

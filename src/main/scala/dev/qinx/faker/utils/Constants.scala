@@ -1,6 +1,7 @@
 package dev.qinx.faker.utils
 
 import dev.qinx.faker.annotation.collection.ArrayType
+import dev.qinx.faker.annotation.data.Series
 
 private[faker] object Constants {
   val PACKAGE: String = "dev.qinx.faker"
@@ -11,6 +12,7 @@ private[faker] object Constants {
   val RESOURCE_DATA: String = "data"
 
   val COLLECTION_PROVIDERS: Array[String] = Array(
-    classOf[ArrayType].getCanonicalName
+    classOf[ArrayType].getCanonicalName,
+    classOf[Series].getCanonicalName
   )
 }

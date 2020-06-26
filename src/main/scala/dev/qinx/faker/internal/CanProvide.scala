@@ -6,6 +6,6 @@ trait CanProvide[T] {
 
   def provide(): T
 
-  def configure(annotation: Annotation): this.type = this
+  def configure(annotation: Annotation): this.type
 
 }

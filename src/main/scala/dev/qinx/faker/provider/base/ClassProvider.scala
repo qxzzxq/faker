@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor
 import dev.qinx.faker.internal._
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.provider.collection.ArrayProvider
+import dev.qinx.faker.provider.data.SeriesProvider
 import dev.qinx.faker.utils.{Constants, DefaultProvider, ReflectUtils}
 
 import scala.collection.mutable
@@ -82,10 +83,25 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
 
         if (componentAnnotation.isDefined) {
           val componentProvider = newInstanceOfProvider(componentAnnotation.get)
-          debug(s"Set user defined ${componentProvider.getClass.getCanonicalName} to the array provider")
+          debug(s"Set user defined provider to the array provider")
           provider.setProvider(componentProvider)
         }
         provider.setComponentType(paramType.getComponentType)
+
+      case provider: SeriesProvider =>
+        debug("Find Series provider, configure component type")
+
+        if (!provider.hasData) {
+          debug("Set data to series provider")
+          if (componentAnnotation.isDefined) {
+            val componentProvider = newInstanceOfProvider(componentAnnotation.get)
+            debug(s"Set user defined provider to the series provider")
+            provider.setProvider(componentProvider)
+          }
+
+          provider.setComponentType(paramType)
+        }
+
       case _ =>
     }
 

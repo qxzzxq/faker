@@ -2,41 +2,22 @@ package dev.qinx.faker.provider.collection
 
 import java.lang.annotation.Annotation
 
-import dev.qinx.faker.internal.{CanProvide, HasSeed, Logging}
+import dev.qinx.faker.internal.{HasComponent, HasSeed}
 import dev.qinx.faker.provider.Provider
-import dev.qinx.faker.utils.{DefaultProvider, ReflectUtils}
+import dev.qinx.faker.utils.ReflectUtils
 
-class ArrayProvider extends Provider[Object] with Logging with HasSeed {
+/**
+ * Array provider will provide an array.
+ *
+ * {{{
+ *   val p = new ArrayProvider
+ *   p.setComponentType(classOf[String)
+ *   p.provide().asInstanceOf[Array[String]]
+ * }}}
+ */
+class ArrayProvider extends Provider[Object] with HasComponent with HasSeed {
 
-  private[this] var provider: Option[CanProvide[_]] = None
-  private[this] var componentType: Option[Class[_]] = None
   private[this] var length: Int = 3
-
-  /**
-   * Set the provider of the component of the array
-   * @param provider a provider that can provide the array component
-   * @return
-   */
-  def setProvider(provider: CanProvide[_]): this.type = {
-    debug(s"Set array component provider ${provider.getClass.getCanonicalName}")
-    this.provider = Option(provider)
-    this
-  }
-
-  /**
-   * Set the component type of this array provider. If no provider was set before calling this method, it will
-   * set the default provider. Otherwise, it won't override the existing provider
-   * @param componentType class of the component
-   * @return
-   */
-  def setComponentType(componentType: Class[_]): this.type = {
-    debug(s"Set array type to ${componentType.getCanonicalName}")
-    this.componentType = Option(componentType)
-    if (provider.isEmpty) {
-      this.provider = Option(DefaultProvider.of(componentType))
-    }
-    this
-  }
 
   def setLength(length: Int): this.type = {
     this.length = length
@@ -71,7 +52,7 @@ class ArrayProvider extends Provider[Object] with Logging with HasSeed {
   }
 
   override def configure(annotation: Annotation): ArrayProvider.this.type = {
-    this.setLength(ReflectUtils.invokeAnnotationMethod[Int](annotation, "length"))
+    this.setLength(ReflectUtils.invokeAnnotationMethod[Int](annotation, "totalLength"))
     val s = getSeedFromAnnotation(annotation)
     if (s.isDefined) {
       this.setSeed(s)

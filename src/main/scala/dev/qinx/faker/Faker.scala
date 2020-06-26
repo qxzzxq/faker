@@ -31,7 +31,7 @@ class Faker[T: ClassTag](val locale: Locale) extends HasSeed with Logging {
   /**
    * Get a sequence of object T with faked data
    *
-   * @param length length of the output sequence
+   * @param length totalLength of the output sequence
    * @return a seq of object T
    */
   def get(length: Long): Seq[T] = (1L to length).map(_ => get())
@@ -44,6 +44,13 @@ class Faker[T: ClassTag](val locale: Locale) extends HasSeed with Logging {
    * @return
    */
   override def setSeed(seed: Long): Faker.this.type = super.setSeed(seed)
+
+  def putSeries(id: String, data: Iterable[_]): this.type = {
+    Faker.putSeries(id, data)
+    this
+  }
+
+  def getSeries(id: String): Array[_] = Faker.getSeries(id)
 }
 
 object Faker extends Logging {
@@ -53,6 +60,12 @@ object Faker extends Logging {
   private[this] val providers = new ConcurrentHashMap[String, Provider[_]]()
 
   private[this] def hasProvider(id: String): Boolean = providers.containsKey(id)
+
+  private[this] val seriesRegistry: ConcurrentHashMap[String, Array[_]] = new ConcurrentHashMap[String, Array[_]]()
+
+  def putSeries(id: String, data: Iterable[_]): Unit = seriesRegistry.put(id, data.toArray)
+
+  def getSeries(id: String): Array[_] = seriesRegistry.get(id)
 
   /**
    * For a provider id and a partioal function that takes an ID to crate a provider, firstly check if
