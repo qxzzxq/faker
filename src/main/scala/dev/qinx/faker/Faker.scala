@@ -6,7 +6,8 @@ import java.util.concurrent.ConcurrentHashMap
 import dev.qinx.faker.enums.Locale
 import dev.qinx.faker.internal.{HasSeed, Logging}
 import dev.qinx.faker.provider.Provider
-import dev.qinx.faker.provider.base.{ArrayProvider, ClassProvider}
+import dev.qinx.faker.provider.base.ClassProvider
+import dev.qinx.faker.provider.collection.ArrayProvider
 
 import scala.reflect.ClassTag
 

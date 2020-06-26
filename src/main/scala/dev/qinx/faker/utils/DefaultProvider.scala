@@ -5,6 +5,7 @@ import java.time.LocalDate
 import dev.qinx.faker.internal.CanProvide
 import dev.qinx.faker.provider._
 import dev.qinx.faker.provider.base._
+import dev.qinx.faker.provider.collection.ArrayProvider
 
 object DefaultProvider {
 

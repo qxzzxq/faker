@@ -1,9 +1,10 @@
-package dev.qinx.faker.provider.base
+package dev.qinx.faker.provider.collection
 
 import java.time.LocalDate
 
 import dev.qinx.faker.Faker
-import dev.qinx.faker.annotation.base.ArrayType
+import dev.qinx.faker.annotation.base.{DoubleType, IntType}
+import dev.qinx.faker.annotation.collection.ArrayType
 import org.scalatest.funsuite.AnyFunSuite
 
 class ArrayProviderSuite extends AnyFunSuite {
@@ -34,6 +35,17 @@ class ArrayProviderSuite extends AnyFunSuite {
     assert(fd.c2.sameElements(fd2.c2))
   }
 
+  test("Multiple annotation") {
+
+    val faker = new Faker[TestArrayProvider3]
+
+    faker.get(100).foreach { data =>
+      assert(data.arr.length === 10)
+      data.arr.foreach(i => assert(i >= 0 && i <= 10))
+    }
+    assertThrows[IllegalArgumentException](new Faker[TestArrayProvider4].get())
+  }
+
 }
 
 object ArrayProviderSuite {
@@ -41,4 +53,6 @@ object ArrayProviderSuite {
   case class TestArrayProvider(c1: String, c2: Array[LocalDate])
   case class TestArrayProvider2(c1: String, @ArrayType(length = 5) c2: Array[LocalDate])
 
+  case class TestArrayProvider3(@ArrayType(length = 10) @IntType(min = 0, max = 10) arr: Array[Int])
+  case class TestArrayProvider4(@DoubleType @IntType(min = 0, max = 10) arr: Array[Int])
 }

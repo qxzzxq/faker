@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor
 
 import dev.qinx.faker.internal._
 import dev.qinx.faker.provider.Provider
+import dev.qinx.faker.provider.collection.ArrayProvider
 import dev.qinx.faker.utils.{Constants, DefaultProvider, ReflectUtils}
 
 import scala.collection.mutable

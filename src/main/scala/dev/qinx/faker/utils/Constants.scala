@@ -1,6 +1,6 @@
 package dev.qinx.faker.utils
 
-import dev.qinx.faker.annotation.base.ArrayType
+import dev.qinx.faker.annotation.collection.ArrayType
 
 private[faker] object Constants {
   val PACKAGE: String = "dev.qinx.faker"

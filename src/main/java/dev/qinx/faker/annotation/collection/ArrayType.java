@@ -1,7 +1,7 @@
-package dev.qinx.faker.annotation.base;
+package dev.qinx.faker.annotation.collection;
 
 import dev.qinx.faker.internal.CanProvide;
-import dev.qinx.faker.provider.base.ArrayProvider;
+import dev.qinx.faker.provider.collection.ArrayProvider;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
