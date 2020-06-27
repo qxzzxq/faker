@@ -122,9 +122,6 @@ faker.getDataSeries.toDS().show()
 // +----------+------+------+---------+
 ```
 
-
-
-
 ## Available Annotations
 - base
   - `@IntType`
@@ -146,6 +143,8 @@ faker.getDataSeries.toDS().show()
   - `@Name`
 - transport
   - `@Airport`
+- company
+  - `@Company`
   
 More features will be added.
 

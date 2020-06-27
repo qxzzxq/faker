@@ -7,7 +7,7 @@ import dev.qinx.faker.internal.HasRandom
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.utils.{Constants, ReflectUtils}
 
-private[person] abstract class LocalNameProvider(val locale: Locale) extends Provider[String] with HasRandom {
+private[faker] abstract class LocalNameProvider(val locale: Locale) extends Provider[String] with HasRandom {
 
   protected var _firstName: Boolean = true
   protected var _lastName: Boolean = true
