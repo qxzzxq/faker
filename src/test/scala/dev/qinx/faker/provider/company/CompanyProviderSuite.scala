@@ -42,7 +42,7 @@ class CompanyProviderSuite extends AnyFunSuite {
   test("Handle seed") {
     new SeedTester[Test1]()
     new SeedTester[Test2]()
-    new SeedTester[Test3]()
+    new SeedTester[Test3](50)
   }
 
 

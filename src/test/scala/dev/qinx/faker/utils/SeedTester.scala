@@ -19,7 +19,7 @@ class SeedTester[T : ClassTag](times: Int = 100) {
     val fd2 = faker2.get()
     val fd3 = faker3.get()
     assert(fd.equals(fd2), s"${fd.toString}, ${fd2.toString}")
-    assert(!fd.equals(fd3))
+    assert(!fd.equals(fd3), s"${fd.toString}, ${fd3.toString}")
   }
 
   def test(f: Faker[T] => Boolean): Unit = {
