@@ -86,7 +86,7 @@ Faker.array[String](5)
 Faker.array[MyClass1](5)
 ``` 
 
-It's also possible to cross join one field to another, in such a use case, use `@Series` annotation
+It's also possible to cross join one field to another to generate all the possible combination. In such a use case, use `@Series` annotation
 ```scala
 case class CrossJoinExample(@Series(length = 2) @Date date: String,
                             @Series(length = 3, crossJoin = "date") @Text(pattern = "??-###") id: String,
