@@ -51,7 +51,9 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
         case sp: SeriesProvider =>
           sp.getCrossJoinTargetName match {
             case Some(toParam) =>
-              val crossJoinTarget = providers.getOrElse(toParam, throw new NoSuchElementException(s"No such field: $toParam"))
+              val crossJoinTarget = providers.getOrElse(toParam,
+                throw new NoSuchElementException(s"No such parameter: $toParam. If you are using scala 2.11, try to compile with javac option '-parameter'")
+              )
               require(crossJoinTarget.isInstanceOf[SeriesProvider], "The cross join target field must also be a series")
               debug(s"Cross join $fromParam -> $toParam")
               sp.crossJoinWith(crossJoinTarget.asInstanceOf[SeriesProvider])
