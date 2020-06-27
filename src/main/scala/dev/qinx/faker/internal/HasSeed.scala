@@ -7,7 +7,7 @@ import dev.qinx.faker.utils.ReflectUtils
 
 trait HasSeed {
 
-  protected var seed: Option[Long] = None
+   var seed: Option[Long] = None
 
   def hasSeed: Boolean = this.seed.nonEmpty
 

@@ -3,6 +3,9 @@ name: test
 on:
   pull_request:
     branches: [ master ]
+  push:
+    branches:
+      - '!master'
 
 jobs:
   test_faker_2_12:

@@ -1,7 +1,10 @@
 package dev.qinx.faker.provider.person
 
+import dev.qinx.faker.Faker
+import dev.qinx.faker.annotation.person.Name
 import dev.qinx.faker.enums.{Gender, Locale}
-import dev.qinx.faker.provider.person.LocalNameProviderSuite.MyLocalNameProvider
+import dev.qinx.faker.provider.person.LocalNameProviderSuite.{MyLocalNameProvider, TestName1, TestName2}
+import dev.qinx.faker.utils.SeedTester
 import org.scalatest.funsuite.AnyFunSuite
 
 class LocalNameProviderSuite extends AnyFunSuite {
@@ -45,9 +48,21 @@ class LocalNameProviderSuite extends AnyFunSuite {
     assert(p.path === "data/person/en/test.txt")
   }
 
+  test("Handle seed") {
+    new SeedTester[TestName1]()
+
+    val faker2a = new Faker[TestName2]
+    val faker2b = new Faker[TestName2]
+
+    assert(faker2a.get() === faker2b.get())
+  }
+
 }
 
 object LocalNameProviderSuite {
+
+  case class TestName1(@Name c1: String)
+  case class TestName2(@Name(seed = "10") c1: String)
 
   class MyLocalNameProvider extends LocalNameProvider(locale = Locale.en) {
     override protected val firstNamesMale: Array[String] = Array("male1", "male2")

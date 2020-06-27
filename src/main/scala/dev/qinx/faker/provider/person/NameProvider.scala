@@ -14,16 +14,27 @@ class NameProvider extends Provider[String] with HasRandom with Logging {
   override def provide(): String = this.provider.provide()
 
   override def setSeed(seed: Long): NameProvider.this.type = {
+    this.setSeed(Option(seed))
+  }
+
+  override def setSeed(seed: Option[Long]): NameProvider.this.type = {
+    super.setSeed(seed)
     if (!this.provider.hasSeed) {
       this.provider.setSeed(seed)
     }
     this
   }
 
+  override def setSeed(annotation: Annotation): Unit = {
+    val s = getSeedFromAnnotation(annotation)
+    this.setSeed(s)
+  }
+
+
   override def configure(annotation: Annotation): this.type = {
     val locale = ReflectUtils.invokeAnnotationMethod[Locale](annotation, "locale")
     this.provider = NameProvider(locale)
-    this.provider.configure(annotation)
+    this.setSeed(annotation)
     this
   }
 

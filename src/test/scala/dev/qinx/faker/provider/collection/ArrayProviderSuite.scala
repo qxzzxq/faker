@@ -46,6 +46,29 @@ class ArrayProviderSuite extends AnyFunSuite {
     assertThrows[IllegalArgumentException](new Faker[TestArrayProvider4].get())
   }
 
+  test("ArrayProvider should handle set seed") {
+    val faker1 = new Faker[TestArrayProvider3]().setSeed(100)
+    val faker2 = new Faker[TestArrayProvider3]().setSeed(100)
+
+    assert(faker1.get().arr.mkString(", ") === faker2.get().arr.mkString(", "))
+    println("---------------")
+
+    val faker3Bis1 = new Faker[TestArrayProvider3bis]()
+    val faker3Bis2 = new Faker[TestArrayProvider3bis]()
+    val data3bis1 = faker3Bis1.get()
+    val data3bis2 = faker3Bis2.get()
+    assert(data3bis1.arr.mkString(", ") === data3bis2.arr.mkString(", "))
+
+    println("---------------")
+    val faker3ter = new Faker[TestArrayProvider3ter]
+    val data3ter = faker3ter.get()
+    assert(data3ter.arr.mkString(", ") !== data3bis2.arr.mkString(", "))
+
+    val faker3 = new Faker[TestArrayProvider3]().setSeed(10)
+    val data3 = faker3.get()
+    assert(data3.arr.mkString(", ") === data3bis2.arr.mkString(", "))
+  }
+
 }
 
 object ArrayProviderSuite {
@@ -54,5 +77,10 @@ object ArrayProviderSuite {
   case class TestArrayProvider2(c1: String, @ArrayType(length = 5) c2: Array[LocalDate])
 
   case class TestArrayProvider3(@ArrayType(length = 10) @IntType(min = 0, max = 10) arr: Array[Int])
+
+  case class TestArrayProvider3bis(@ArrayType(length = 10, seed = "10") @IntType(min = 0, max = 10) arr: Array[Int])
+
+  case class TestArrayProvider3ter(@ArrayType(length = 10, seed = "10") @IntType(min = 0, max = 10, seed = "11") arr: Array[Int])
+
   case class TestArrayProvider4(@DoubleType @IntType(min = 0, max = 10) arr: Array[Int])
 }
