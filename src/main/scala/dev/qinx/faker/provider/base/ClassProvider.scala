@@ -1,7 +1,7 @@
 package dev.qinx.faker.provider.base
 
 import java.lang.annotation.Annotation
-import java.lang.reflect.Constructor
+import java.lang.reflect.{Constructor, Parameter}
 
 import dev.qinx.faker.internal._
 import dev.qinx.faker.provider.Provider
@@ -104,12 +104,15 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
    * For a given annotations, invoke the method "provider" and instantiate it.
    *
    * @param annotations annotations that has the provider method
-   * @param paramType   class of parameter that has the annotations
+   * @param param   parameter that has the annotations
    * @throws NoSuchMethodException cannot find the provider method in the annotations
    * @return an object of type CanProvide
    */
   @throws[NoSuchMethodException]
-  private[this] def getProviderFromAnnotation(annotations: Array[Annotation], paramType: Class[_]): CanProvide[_] = {
+  private[this] def getProviderFromAnnotation(annotations: Array[Annotation], param: Parameter): CanProvide[_] = {
+    val paramType = param.getType
+    debug(s"Use provider defined in the annotation for the field <${param.getName}>: ${paramType.getCanonicalName}")
+
     var providerAnnotation: Option[Annotation] = None
     var componentAnnotation: Option[Annotation] = None
 
@@ -138,22 +141,24 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
 
     paramProvider match {
       case provider: ArrayProvider =>
-        debug("Find ArrayType provider, configure array type")
+        debug("Find ArrayType provider")
 
         if (componentAnnotation.isDefined) {
           val componentProvider = newInstanceOfProvider(componentAnnotation.get)
-          debug(s"Set user defined provider to the array provider")
+          trace("Array provider will use the annotation configuration to set its component provider")
           provider.setComponentProvider(componentProvider)
         }
         provider.setComponentType(paramType.getComponentType)
 
       case provider: SeriesProvider =>
-        debug("Find Series provider, configure component type")
+        debug("Find Series provider")
 
         if (!provider.hasData) {
+
           if (componentAnnotation.isDefined) {
+            trace("A component provider is defined with an annotation. Series provider will use the annotation " +
+              "configuration to set its component provider")
             val componentProvider = newInstanceOfProvider(componentAnnotation.get)
-            debug(s"Set user defined provider as the series' component provider")
             provider.setComponentProvider(componentProvider)
           }
 
@@ -220,11 +225,10 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
       }
 
       val provider = if (annotation.isEmpty) {
-        debug(s"Set default provider for the field ${param.getName}: ${paramType.getCanonicalName}")
+        debug(s"Use default provider for the field ${param.getName}: ${paramType.getCanonicalName}")
         DefaultProvider.of(paramType)
       } else {
-        debug(s"Set provider from annotation for the field ${param.getName}: ${paramType.getCanonicalName}")
-        getProviderFromAnnotation(annotation, paramType)
+        getProviderFromAnnotation(annotation, param)
       }
 
       setSeedOfProvider(provider)

@@ -7,6 +7,7 @@ import dev.qinx.faker.annotation.base.{FloatType, IntType, Text}
 import dev.qinx.faker.annotation.data.Series
 import dev.qinx.faker.annotation.datetime.Date
 import dev.qinx.faker.annotation.person.Name
+import dev.qinx.faker.utils.SeedTester
 import org.scalatest.funsuite.AnyFunSuite
 
 class SeriesProviderSuite extends AnyFunSuite {
@@ -74,14 +75,17 @@ class SeriesProviderSuite extends AnyFunSuite {
   }
 
   test("Series provider should handle seed") {
-//    val tester = new SeedTester[Test1]()
-//    new SeedTester[Test2]()
-//    new SeedTester[Test3]()
-//    new SeedTester[Test4]()
-//    new SeedTester[Test5]()
-//    new SeedTester[Test6]()
-//    new SeedTester[Test7]()
-//    new SeedTester[Test8]()
+
+    Faker.putSeries("A", Array(1L, 2L, 3L))
+    Faker.putSeries("myInput", Array("apple", "banana", "orange"))
+    val tester = new SeedTester[Test1]()
+    new SeedTester[Test2]()
+    new SeedTester[Test3]()
+    new SeedTester[Test4]()
+    new SeedTester[Test5]()
+    new SeedTester[Test6]()
+    new SeedTester[Test7]()
+    new SeedTester[Test8]()
 
     val faker1 = new Faker[Test10]
     val faker2 = new Faker[Test10]
