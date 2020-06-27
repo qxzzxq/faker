@@ -139,6 +139,7 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <parameters>true</parameters>
                 </configuration>
                 <executions>
                     <execution>
@@ -152,6 +153,9 @@
                 <artifactId>scala-maven-plugin</artifactId>
                 <version>${scala.maven.plugin.version}</version>
                 <configuration>
+                    <javacArgs>
+                        <javacArg>-parameters</javacArg>
+                    </javacArgs>
                     <args>
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>

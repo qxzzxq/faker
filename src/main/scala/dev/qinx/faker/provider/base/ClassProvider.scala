@@ -16,10 +16,19 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
 
   private[this] var cls: Option[Class[_]] = None
   private[this] val length: mutable.HashSet[Int] = new mutable.HashSet[Int]()
+  private[this] lazy val declaredFields: Array[String] = this.cls.get.getDeclaredFields.map(_.getName)
 
   def setClass(cls: Class[_]): this.type = {
     this.cls = Option(cls)
     this
+  }
+
+  private[this] def paramNameOf(parameter: Parameter): String = {
+    if (parameter.isNamePresent) {
+      parameter.getName
+    } else {
+      declaredFields(parameter.getName.stripPrefix("arg").toInt)
+    }
   }
 
   /**
@@ -52,7 +61,7 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
           sp.getCrossJoinTargetName match {
             case Some(toParam) =>
               val crossJoinTarget = providers.getOrElse(toParam,
-                throw new NoSuchElementException(s"No such parameter: $toParam. If you are using scala 2.11, try to compile with javac option '-parameter'")
+                throw new NoSuchElementException(s"No such parameter: $toParam. If you are using scala 2.11, try to compile with javac option '-parameters'")
               )
               require(crossJoinTarget.isInstanceOf[SeriesProvider], "The cross join target field must also be a series")
               debug(s"Cross join $fromParam -> $toParam")
@@ -106,14 +115,15 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
    * For a given annotations, invoke the method "provider" and instantiate it.
    *
    * @param annotations annotations that has the provider method
-   * @param param   parameter that has the annotations
+   * @param param       parameter that has the annotations
    * @throws NoSuchMethodException cannot find the provider method in the annotations
    * @return an object of type CanProvide
    */
   @throws[NoSuchMethodException]
   private[this] def getProviderFromAnnotation(annotations: Array[Annotation], param: Parameter): CanProvide[_] = {
     val paramType = param.getType
-    debug(s"Use provider defined in the annotation for the field <${param.getName}>: ${paramType.getCanonicalName}")
+    val paramName = paramNameOf(param)
+    debug(s"Use provider defined in the annotation for the field <$paramName>: ${paramType.getCanonicalName}")
 
     var providerAnnotation: Option[Annotation] = None
     var componentAnnotation: Option[Annotation] = None
@@ -221,20 +231,21 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
 
     primaryConstructor.getParameters.foreach { param =>
       val paramType = param.getType
+      val paramName = paramNameOf(param)
 
       val annotation = param.getAnnotations.filter { anno =>
         ReflectUtils.hasDeclaredMethod(anno.annotationType(), "provider")
       }
 
       val provider = if (annotation.isEmpty) {
-        debug(s"Use default provider for the field ${param.getName}: ${paramType.getCanonicalName}")
+        debug(s"Use default provider for the field $paramName: ${paramType.getCanonicalName}")
         DefaultProvider.of(paramType)
       } else {
         getProviderFromAnnotation(annotation, param)
       }
 
       setSeedOfProvider(provider)
-      providers.put(param.getName, provider)
+      providers.put(paramName, provider)
     }
 
     providers
@@ -249,15 +260,16 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
     trace("Fake constructor arguments")
     primaryConstructor.getParameters.map { param =>
       val paramType = param.getType
-      val provider = primaryConstructorArgProviders.getOrElse(param.getName, throw new NoSuchElementException(s"Cannot find provider of type ${param.getType}"))
+      val paramName = paramNameOf(param)
+      val provider = primaryConstructorArgProviders.getOrElse(paramName, throw new NoSuchElementException(s"Cannot find provider of type ${param.getType}"))
 
-      trace(s"Fake data for parameter ${param.getName}")
+      trace(s"Fake data for parameter $paramName")
 
       val fakeData = provider.provide()
       val fakeDataCls: Class[_] = fakeData.getClass
       val paramCls: Class[_] = ReflectUtils.getClassOf(paramType)
 
-      trace(s"param: ${param.getName}, paramType: ${paramType.getCanonicalName}, fakeData class: ${fakeDataCls.getCanonicalName}")
+      trace(s"param: $paramName, paramType: ${paramType.getCanonicalName}, fakeData class: ${fakeDataCls.getCanonicalName}")
 
       if (paramCls.isAssignableFrom(fakeDataCls)) {
         fakeData.asInstanceOf[Object]

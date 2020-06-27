@@ -38,7 +38,6 @@ class SeriesProviderSuite extends AnyFunSuite {
   }
 
   test("Series provider should handle cross join") {
-    assume(!util.Properties.versionNumberString.startsWith("2.11"))
     val faker4 = new Faker[Test4]
     assert(faker4.getDataSeries.length === 25)
     faker4.getDataSeries.foreach(println)
@@ -51,8 +50,6 @@ class SeriesProviderSuite extends AnyFunSuite {
   }
 
   test("Series provider should handle id") {
-    assume(!util.Properties.versionNumberString.startsWith("2.11"))
-
     val faker5 = new Faker[Test5]
     faker5.putSeries("A", Array(1L, 2L, 3L))
     assert(faker5.getDataSeries.length === 15)
@@ -67,8 +64,6 @@ class SeriesProviderSuite extends AnyFunSuite {
   }
 
   test("Series provider should handle cross join with different order") {
-    assume(!util.Properties.versionNumberString.startsWith("2.11"))
-
     val faker8 = new Faker[Test8]
     faker8.putSeries("myInput", Array("apple", "banana", "orange"))
 
@@ -82,8 +77,6 @@ class SeriesProviderSuite extends AnyFunSuite {
   }
 
   test("Series provider should handle seed") {
-    assume(!util.Properties.versionNumberString.startsWith("2.11"))
-
     Faker.putSeries("A", Array(1L, 2L, 3L))
     Faker.putSeries("myInput", Array("apple", "banana", "orange"))
     val tester = new SeedTester[Test1]()
