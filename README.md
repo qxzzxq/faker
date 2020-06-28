@@ -154,3 +154,11 @@ the corresponding `Locale` value like this:
 ```Scala
 @Name(locale = Locale.zh_CN)
 ```
+
+## Performance
+Faker is thread safe, however the concurrent use may lead to poor performance (due to the limit of the Java `Random` class).
+For a given case class, the time complexity is `O(n)`.
+
+Here is the benchmark result of a 12-field case class (CPU Xeon E5 2680-v2):
+
+![benchmark](doc/img/performance.svg)  
