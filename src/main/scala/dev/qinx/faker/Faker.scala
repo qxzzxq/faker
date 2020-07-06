@@ -92,7 +92,7 @@ object Faker extends Logging {
   }
 
   /**
-   * For a provider id and a partioal function that takes an ID to crate a provider, firstly check if
+   * For a provider id and a partial function that takes an ID to crate a provider, firstly check if
    * another provider with the given id was previously registered. If not then instantiate the provider
    * with the given id and save it into providers. Otherwise, fetch the registered provider and provide the object.
    *

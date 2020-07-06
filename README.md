@@ -145,6 +145,9 @@ faker.getDataSeries.toDS().show()
   - `@Airport`
 - company
   - `@Company`
+- data
+  - `@Series`
+  - `@Gaussian`
   
 More features will be added.
 
