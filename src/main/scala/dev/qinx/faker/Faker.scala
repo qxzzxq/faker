@@ -83,7 +83,13 @@ object Faker extends Logging {
 
   def putSeries(id: String, data: Iterable[_]): Unit = seriesRegistry.put(id, data.toArray)
 
-  def getSeries(id: String): Array[_] = seriesRegistry.get(id)
+  def getSeries(id: String): Array[_] = {
+    if (seriesRegistry.containsKey(id)) {
+      seriesRegistry.get(id)
+    } else {
+      throw new NoSuchElementException(s"Cannot find any series with id '$id'")
+    }
+  }
 
   /**
    * For a provider id and a partioal function that takes an ID to crate a provider, firstly check if

@@ -100,6 +100,10 @@ class SeriesProviderSuite extends AnyFunSuite {
 
   }
 
+  test("Series provider should throw no such element exception when the input id could not be found") {
+    val faker = new Faker[Test9]()
+    assertThrows[NoSuchElementException](faker.getDataSeries)
+  }
 
 }
 
@@ -137,4 +141,6 @@ object SeriesProviderSuite {
                    @Series(length = 3, crossJoin = "name") @Text(pattern = "??-###") id: String,
                    @Series(id = "myInput", crossJoin = "date") name: String,
                    @FloatType(min = 10, max = 20) price: Float)
+
+  case class Test9(@Series(id = "notExist") text: String)
 }
