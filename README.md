@@ -148,6 +148,8 @@ faker.getDataSeries.toDS().show()
 - data
   - `@Series`
   - `@Gaussian`
+- collection
+  - `@ArrayType`
   
 More features will be added.
 
