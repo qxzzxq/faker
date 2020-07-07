@@ -59,7 +59,7 @@ new Faker[MyClass1] get 10 foreach println
 // MyClass1(2016-05-01,03:42:27,MRS,季兰英,qV-446,-995036697,696711130,7)
 // MyClass1(1977-10-08,10:04:50,MRS,荆红,pk-108,-1973051050,-1366603797,2)
 // MyClass1(1974-09-16,23:26:43,BOD,廖秀梅,He-851,-462826625,1149563170,5)
-// MyClass1(1981-04-19,08:03:33,BSL,韩超,hk-371,1977755351,1041944832,6)```
+// MyClass1(1981-04-19,08:03:33,BSL,韩超,hk-371,1977755351,1041944832,6)
 ```
 
 Faker can also handle array (the support of other collections are still a WIP)
@@ -86,7 +86,7 @@ Faker.array[String](5)
 Faker.array[MyClass1](5)
 ``` 
 
-It's also possible to cross join one field to another to generate all the possible combination. In such a use case, use `@Series` annotation
+It's also possible to cross join one field to another to generate all the possible combinations. In such a use case, use the `@Series` annotation
 ```scala
 case class CrossJoinExample(@Series(length = 2) @Date date: String,
                             @Series(length = 3, crossJoin = "date") @Text(pattern = "??-###") id: String,
