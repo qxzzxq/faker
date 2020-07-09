@@ -21,12 +21,26 @@ class Faker[T: ClassTag](val locale: Locale) extends HasSeed with Logging {
     .setClass(classTag.runtimeClass)
     .setSeed(this.seed)
 
+  private[this] var arbitraryFields: Seq[ArbitraryField] = Seq()
+
   /**
    * Get an object of type T with faked data
    *
    * @return an object of type T
    */
-  def get(): T = classProvider.provide().asInstanceOf[T]
+  def get(): T = {
+    if (arbitraryFields.isEmpty) {
+      classProvider.provide().asInstanceOf[T]
+    } else {
+      val args = arbitraryFields.map(_.value(null).asInstanceOf[Object])
+      classTag
+        .runtimeClass
+        .getConstructors
+        .head
+        .newInstance(args: _*)
+        .asInstanceOf[T]
+    }
+  }
 
   /**
    * Get a sequence of object T with faked data
@@ -69,9 +83,29 @@ class Faker[T: ClassTag](val locale: Locale) extends HasSeed with Logging {
   }
 
   def getSeries(id: String): Array[_] = Faker.getSeries(id)
+
+  def withArbitraryFields(fields: ArbitraryField*): this.type = {
+    this.arbitraryFields = fields
+    this
+  }
+
 }
 
 object Faker extends Logging {
+
+  object implicits {
+
+    /**
+     * Converts $"col name" into a [[ArbitraryField]].
+     *
+     * @since 2.0.0
+     */
+    implicit class StringToValue(val sc: StringContext) {
+      def af(args: Any*): ArbitraryField = {
+        new ArbitraryField(sc.s(args: _*))
+      }
+    }
+  }
 
   private[this] var seed: Option[Long] = None
 
