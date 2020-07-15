@@ -8,6 +8,7 @@ import dev.qinx.faker.internal.{HasSeed, Logging}
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.provider.base.ClassProvider
 import dev.qinx.faker.provider.collection.ArrayProvider
+import dev.qinx.faker.provider.person.Person
 
 import scala.reflect.ClassTag
 
@@ -39,10 +40,11 @@ class Faker[T: ClassTag](val locale: Locale) extends HasSeed with Logging {
   /**
    * If the data has one or more series annotation, then return a seq with the minimum length that contains
    * all the unique series element combination
+   *
    * @return
    */
   def getDataSeries: Seq[T] = {
-    val first = get()  // instantiate lazy variables
+    val first = get() // instantiate lazy variables
     val l = classProvider.getDataSeriesLength
 
     if (l != 0) {
@@ -129,10 +131,15 @@ object Faker extends Logging {
   def name(locale: Locale = Locale.en): String = {
     val providerID = s"${locale.name()}NameProvider"
     provide[String](providerID) {
-      id => dev.qinx.faker.provider.person
-        .NameProvider(locale)
-        .setProviderID(id)
+      id =>
+        dev.qinx.faker.provider.person
+          .NameProvider(locale)
+          .setProviderID(id)
     }
+  }
+
+  def person(locale: Locale = Locale.en): Person = {
+    new Person(locale)
   }
 
   def array[T](length: Int)(implicit classTag: ClassTag[T]): Array[T] = {

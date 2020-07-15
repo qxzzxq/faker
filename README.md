@@ -4,7 +4,7 @@
 
 Faker is a Scala library that can generate fake data.
 
-This project is inspired by the [Python package Faker](https://github.com/joke2k/faker).
+This project is inspired by the other faker projects. 
 
 ## Get faker
 This project does not have a stable release yet (maybe soon). To test faker, use the snapshot version:
@@ -76,16 +76,6 @@ fake.myClass1 foreach println
 case class MyClass2Bis(@ArrayType(length = 10) myClass1: Array[MyClass1])
 ```
 
-You can also generate fake data by using the `Faker` singleton:
-```scala
-import dev.qinx.faker.Faker
-
-Faker.name()
-Faker.localDate()
-Faker.array[String](5)
-Faker.array[MyClass1](5)
-``` 
-
 It's also possible to cross join one field to another to generate all the possible combinations. In such a use case, use the `@Series` annotation
 ```scala
 case class CrossJoinExample(@Series(length = 2) @Date date: String,
@@ -121,6 +111,16 @@ faker.getDataSeries.toDS().show()
 // |1980-09-04|wA-500|orange|19.337175|
 // +----------+------+------+---------+
 ```
+
+Faker also provides the classic flavor API like the other faker libraries:
+```scala
+import dev.qinx.faker.Faker
+
+Faker.name()
+Faker.localDate()
+Faker.array[String](5)
+Faker.array[MyClass1](5)
+``` 
 
 ## Available Annotations
 - base
