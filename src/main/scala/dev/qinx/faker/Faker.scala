@@ -12,7 +12,7 @@ import dev.qinx.faker.provider.person.Person
 
 import scala.reflect.ClassTag
 
-class Faker[T: ClassTag](val locale: Locale) extends HasSeed with Logging {
+final class Faker[T: ClassTag](val locale: Locale) extends HasSeed with Logging {
 
   def this() = this(Locale.en)
 
@@ -79,7 +79,7 @@ object Faker extends Logging {
 
   private[this] val providers = new ConcurrentHashMap[String, Provider[_]]()
 
-  private[this] def hasProvider(id: String): Boolean = providers.containsKey(id)
+  private[faker] def hasProvider(id: String): Boolean = providers.containsKey(id)
 
   private[this] val seriesRegistry: ConcurrentHashMap[String, Array[_]] = new ConcurrentHashMap[String, Array[_]]()
 
@@ -103,7 +103,7 @@ object Faker extends Logging {
    * @tparam T type of the output
    * @return an object of type T
    */
-  private[this] def provide[T](id: String)(pf: String => Provider[T]): T = {
+  private[faker] def provide[T](id: String)(pf: String => Provider[T]): T = {
     if (!hasProvider(id)) {
       debug(s"Register provider $id")
       providers.put(id, pf(id))
@@ -128,19 +128,7 @@ object Faker extends Logging {
     }
   }
 
-  def name(locale: Locale = Locale.en): String = {
-    val providerID = s"${locale.name()}NameProvider"
-    provide[String](providerID) {
-      id =>
-        dev.qinx.faker.provider.person
-          .NameProvider(locale)
-          .setProviderID(id)
-    }
-  }
-
-  def person(locale: Locale = Locale.en): Person = {
-    new Person(locale)
-  }
+  def person(locale: Locale = Locale.en, seed: Option[Long] = None): Person = new Person(locale, seed)
 
   def array[T](length: Int)(implicit classTag: ClassTag[T]): Array[T] = {
     val providerID = s"${classTag.runtimeClass.getCanonicalName}${length}ArrayProvider"

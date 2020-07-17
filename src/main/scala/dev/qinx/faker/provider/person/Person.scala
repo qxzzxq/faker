@@ -1,5 +1,6 @@
 package dev.qinx.faker.provider.person
 
+import dev.qinx.faker.Faker
 import dev.qinx.faker.enums.{Gender, Locale}
 
 class Person(val locale: Locale = Locale.en,
@@ -8,51 +9,93 @@ class Person(val locale: Locale = Locale.en,
   private[this] val provider = NameProvider(locale).setSeed(seed)
 
   def lastName(): String = synchronized {
-    provider.setLastName(true)
-    provider.setFirstName(false)
-    provider.setGender(Gender.All)
-    provider.provide()
+    val providerID = s"${locale.name()}${seed.getOrElse("")}LastNameProvider"
+    Faker.provide[String](providerID) {
+      id =>
+        NameProvider(locale)
+          .setProviderID(id)
+          .setLastName(true)
+          .setFirstName(false)
+          .setGender(Gender.All)
+          .setSeed(seed)
+    }
   }
 
   def firstName(): String = synchronized {
-    provider.setLastName(false)
-    provider.setFirstName(true)
-    provider.setGender(Gender.All)
-    provider.provide()
+    val providerID = s"${locale.name()}${seed.getOrElse("")}FirstNameProvider"
+    Faker.provide[String](providerID) {
+      id =>
+        NameProvider(locale)
+          .setProviderID(id)
+          .setLastName(false)
+          .setFirstName(true)
+          .setGender(Gender.All)
+          .setSeed(seed)
+    }
   }
 
   def firstNameMale(): String = synchronized {
-    provider.setLastName(false)
-    provider.setFirstName(true)
-    provider.setGender(Gender.Male)
-    provider.provide()
+    val providerID = s"${locale.name()}${seed.getOrElse("")}firstNameMaleProvider"
+    Faker.provide[String](providerID) {
+      id =>
+        NameProvider(locale)
+          .setProviderID(id)
+          .setLastName(false)
+          .setFirstName(true)
+          .setGender(Gender.Male)
+          .setSeed(seed)
+    }
   }
 
   def firstNameFemale(): String = synchronized {
-    provider.setLastName(false)
-    provider.setFirstName(true)
-    provider.setGender(Gender.Female)
-    provider.provide()
+    val providerID = s"${locale.name()}${seed.getOrElse("")}firstNameFemaleProvider"
+    Faker.provide[String](providerID) {
+      id =>
+        NameProvider(locale)
+          .setProviderID(id)
+          .setLastName(false)
+          .setFirstName(true)
+          .setGender(Gender.Female)
+          .setSeed(seed)
+    }
   }
 
   def name(): String = synchronized {
-    provider.setLastName(true)
-    provider.setFirstName(true)
-    provider.setGender(Gender.All)
-    provider.provide()
+    val providerID = s"${locale.name()}${seed.getOrElse("")}nameProvider"
+    Faker.provide[String](providerID) {
+      id =>
+        NameProvider(locale)
+          .setProviderID(id)
+          .setLastName(true)
+          .setFirstName(true)
+          .setGender(Gender.All)
+          .setSeed(seed)
+    }
   }
 
   def nameMale(): String = synchronized {
-    provider.setLastName(true)
-    provider.setFirstName(true)
-    provider.setGender(Gender.Male)
-    provider.provide()
+    val providerID = s"${locale.name()}${seed.getOrElse("")}nameMaleProvider"
+    Faker.provide[String](providerID) {
+      id =>
+        NameProvider(locale)
+          .setProviderID(id)
+          .setLastName(true)
+          .setFirstName(true)
+          .setGender(Gender.Male)
+          .setSeed(seed)
+    }
   }
 
   def nameFemale(): String = synchronized {
-    provider.setLastName(true)
-    provider.setFirstName(true)
-    provider.setGender(Gender.Female)
-    provider.provide()
+    val providerID = s"${locale.name()}${seed.getOrElse("")}nameFemaleProvider"
+    Faker.provide[String](providerID) {
+      id =>
+        NameProvider(locale)
+          .setProviderID(id)
+          .setLastName(true)
+          .setFirstName(true)
+          .setGender(Gender.Female)
+          .setSeed(seed)
+    }
   }
 }

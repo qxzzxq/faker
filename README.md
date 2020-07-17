@@ -116,7 +116,7 @@ Faker also provides the classic flavor API like the other faker libraries:
 ```scala
 import dev.qinx.faker.Faker
 
-Faker.name()
+Faker.person().name()
 Faker.localDate()
 Faker.array[String](5)
 Faker.array[MyClass1](5)

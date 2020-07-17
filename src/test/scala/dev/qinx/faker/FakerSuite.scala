@@ -44,7 +44,8 @@ class FakerSuite extends AnyFunSuite {
   }
 
   test("We should be able to call the companions methods") {
-    assert(Faker.name().nonEmpty)
+    println(Faker.person(Locale.zh_CN).name())
+    assert(Faker.person().name().nonEmpty)
     assert(Faker.localDate() != null)
   }
 
@@ -71,7 +72,7 @@ class FakerSuite extends AnyFunSuite {
   test("Faker singleton") {
 
     Faker.array[TestName](1).foreach(println)
-    println(Faker.name())
+    println(Faker.person().name())
     println(Faker.localDate())
 
     Faker.array[String](5).foreach(println)
