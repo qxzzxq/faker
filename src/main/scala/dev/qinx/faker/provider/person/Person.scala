@@ -6,8 +6,6 @@ import dev.qinx.faker.enums.{Gender, Locale}
 class Person(val locale: Locale = Locale.en,
              val seed: Option[Long] = None) {
 
-  private[this] val provider = NameProvider(locale).setSeed(seed)
-
   def lastName(): String = synchronized {
     val providerID = s"${locale.name()}${seed.getOrElse("")}LastNameProvider"
     Faker.provide[String](providerID) {

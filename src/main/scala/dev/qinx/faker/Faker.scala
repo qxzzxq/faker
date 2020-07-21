@@ -104,11 +104,15 @@ object Faker extends Logging {
    * @return an object of type T
    */
   private[faker] def provide[T](id: String)(pf: String => Provider[T]): T = {
+    saveProviderIfNotExist[T](id, pf)
+    providers.get(id).provide().asInstanceOf[T]
+  }
+
+  private[this] def saveProviderIfNotExist[T](id: String, pf: String => Provider[T]): Unit = synchronized {
     if (!hasProvider(id)) {
       debug(s"Register provider $id")
       providers.put(id, pf(id))
     }
-    providers.get(id).provide().asInstanceOf[T]
   }
 
   def setSeed(seed: Long): this.type = {
