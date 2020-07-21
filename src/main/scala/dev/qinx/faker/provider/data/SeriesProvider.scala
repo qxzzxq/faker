@@ -73,7 +73,9 @@ class SeriesProvider
 
     require(this.data.length == this._dataLength, "The length of actual data does not match the defined value in @Series annotation")
     val output = data(index.get())
+
     this._string = Option(output.toString)
+
     this._option = Option(Option(output.asInstanceOf[Object]))
 
     counter.getAndIncrement()

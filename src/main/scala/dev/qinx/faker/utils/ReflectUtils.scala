@@ -2,7 +2,7 @@ package dev.qinx.faker.utils
 
 import java.lang.annotation.Annotation
 
-import dev.qinx.faker.internal.Logging
+import dev.qinx.faker.internal.{CanProvide, HasOption, HasString, Logging}
 
 private[faker] object ReflectUtils extends Logging {
 
@@ -86,4 +86,15 @@ private[faker] object ReflectUtils extends Logging {
     invokeMethod[T](annotation.annotationType(), name, annotation)
   }
 
+  def provideArbitrary(outputType: Class[_], provider: CanProvide[_]): Either[String, Option[_]] = {
+
+    if (outputType.equals(classOf[String]) && classOf[HasString].isAssignableFrom(provider.getClass)) {
+      Left(provider.asInstanceOf[HasString].provideString)
+    } else if (outputType.equals(classOf[Option[_]]) && classOf[HasString].isAssignableFrom(provider.getClass)) {
+      Right(provider.asInstanceOf[HasOption[_]].provideOption)
+    } else {
+      throw new IllegalArgumentException(s"${provider.getClass.getSimpleName} cannot provide the type ${outputType.getSimpleName}")
+    }
+
+  }
 }

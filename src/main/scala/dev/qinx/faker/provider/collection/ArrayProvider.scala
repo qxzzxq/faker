@@ -50,10 +50,29 @@ class ArrayProvider extends Provider[Object] with HasComponent with HasSeed {
     require(componentProvider.isDefined, "No component provider is set")
 
     this.updateSeedOfComponentProvider()
-    trace(s"This array provider will provide $length instances of ${componentType.get}")
-    val arr = java.lang.reflect.Array.newInstance(componentType.get, length)
+
+    val _ct = componentType.get
+    val _cp = componentProvider.get
+
+    trace(s"This array provider will provide $length instances of ${_ct}")
+    val arr = java.lang.reflect.Array.newInstance(_ct, length)
     (0 until length).foreach { i =>
-      java.lang.reflect.Array.set(arr, i, componentProvider.get.provide())
+
+      try {
+        java.lang.reflect.Array.set(arr, i, _cp.provide())
+      } catch {
+        case _: IllegalArgumentException =>
+
+          val arbitraryValue = ReflectUtils.provideArbitrary(_ct, _cp)
+
+          arbitraryValue match {
+            case Left(l) => java.lang.reflect.Array.set(arr, i, l)
+            case Right(r) => java.lang.reflect.Array.set(arr, i, r)
+            case _ =>
+          }
+
+        case e: Throwable => throw e
+      }
     }
     arr
   }

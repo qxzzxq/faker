@@ -21,14 +21,13 @@ class FloatProviderSuite extends AnyFunSuite {
 
     (1 to 1000) foreach { _ =>
       val c2: Float = faker.get().c2
-      assert(c2 >= 100 && c2 < 101)
+      assert(c2 >= 100 && c2 <= 101)
     }
   }
 
   test("FloatProvider exception") {
     val faker = new Faker[TestFloatProviderException]
-    assertThrows[NoSuchElementException](faker.get())
-
+    assertThrows[IllegalArgumentException](faker.get())
   }
 
   test("Set seed") {
