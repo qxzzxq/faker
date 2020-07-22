@@ -143,6 +143,7 @@ object Faker extends Logging {
         .setComponentType(classTag.runtimeClass)
         .setLength(length)
         .setSeed(seed)
+        .asInstanceOf[Provider[Object]]
     }.asInstanceOf[Array[T]]
   }
 

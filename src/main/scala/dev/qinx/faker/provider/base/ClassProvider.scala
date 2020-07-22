@@ -50,7 +50,7 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
   /**
    * The list of provider for each parameter of the primary constructor.
    */
-  private[this] lazy val primaryConstructorArgProviders: mutable.LinkedHashMap[String, CanProvide[_]] = {
+  private[this] lazy val primaryConstructorArgProviders: mutable.LinkedHashMap[String, Provider[_]] = {
     val providers = this.getProviders
 
     // handle series cross join
@@ -120,7 +120,7 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
    * @return an object of type CanProvide
    */
   @throws[NoSuchMethodException]
-  private[this] def getProviderFromAnnotation(annotations: Array[Annotation], param: Parameter): CanProvide[_] = {
+  private[this] def getProviderFromAnnotation(annotations: Array[Annotation], param: Parameter): Provider[_] = {
     val paramType = param.getType
     val paramName = paramNameOf(param)
     debug(s"Use provider defined in the annotation for the field <$paramName>: ${paramType.getCanonicalName}")
@@ -173,9 +173,8 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
             val componentProvider = newInstanceOfProvider(componentAnnotation.get)
             provider.setComponentProvider(componentProvider)
           }
-
-          provider.setComponentType(paramType)
         }
+        provider.setComponentType(paramType)
 
       case _ =>
     }
@@ -183,9 +182,9 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
     paramProvider
   }
 
-  private[this] def newInstanceOfProvider(annotation: Annotation): CanProvide[_] = {
+  private[this] def newInstanceOfProvider(annotation: Annotation): Provider[_] = {
     ReflectUtils
-      .invokeAnnotationMethod[Class[CanProvide[_]]](annotation, "provider")
+      .invokeAnnotationMethod[Class[Provider[_]]](annotation, "provider")
       .getDeclaredConstructor()
       .newInstance()
       .configure(annotation)
@@ -198,7 +197,7 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
    *
    * @param provider provider that we want to set seed to
    */
-  private[this] def setSeedOfProvider(provider: CanProvide[_]): Unit = {
+  private[this] def setSeedOfProvider(provider: Provider[_]): Unit = {
     this.seed match {
       case Some(seed) =>
         // set seed only if the provider inherits the HasSeed trait
@@ -220,14 +219,14 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
    */
   @throws[NoSuchElementException]("No provider could be found")
   @throws[NoSuchMethodException]
-  private[this] def getProviders: mutable.LinkedHashMap[String, CanProvide[_]] = {
+  private[this] def getProviders: mutable.LinkedHashMap[String, Provider[_]] = {
     this.seed match {
       case Some(seed) => info(s"Class provider seed was set to $seed")
       case _ =>
     }
     debug("Get constructor arg providers")
 
-    val providers = new mutable.LinkedHashMap[String, CanProvide[_]]()
+    val providers = new mutable.LinkedHashMap[String, Provider[_]]()
 
     primaryConstructor.getParameters.foreach { param =>
       val paramType = param.getType
@@ -263,16 +262,11 @@ class ClassProvider extends Provider[Object] with Logging with HasSeed {
       val paramName = paramNameOf(param)
       val provider = primaryConstructorArgProviders.getOrElse(paramName, throw new NoSuchElementException(s"Cannot find provider of type ${param.getType}"))
 
-      trace(s"Fake data for parameter $paramName")
+      val canProvide = provider.canProvide(paramType)
+      trace(s"Fake data for param: $paramName, paramType: ${paramType.getCanonicalName}")
 
-      val fakeData = provider.provide()
-      val fakeDataCls: Class[_] = fakeData.getClass
-      val paramCls: Class[_] = ReflectUtils.getClassOf(paramType)
-
-      trace(s"param: $paramName, paramType: ${paramType.getCanonicalName}, fakeData class: ${fakeDataCls.getCanonicalName}")
-
-      if (paramCls.isAssignableFrom(fakeDataCls)) {
-        fakeData.asInstanceOf[Object]
+      if (canProvide) {
+        provider.provide().asInstanceOf[Object]
       } else {
         ReflectUtils.provideArbitrary(paramType, provider) match {
           case Left(l) => l.asInstanceOf[Object]

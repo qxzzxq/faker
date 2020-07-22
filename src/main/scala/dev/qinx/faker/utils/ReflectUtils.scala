@@ -2,7 +2,8 @@ package dev.qinx.faker.utils
 
 import java.lang.annotation.Annotation
 
-import dev.qinx.faker.internal.{CanProvide, HasOption, HasString, Logging}
+import dev.qinx.faker.internal.{HasOption, HasString, Logging}
+import dev.qinx.faker.provider.Provider
 
 private[faker] object ReflectUtils extends Logging {
 
@@ -52,6 +53,17 @@ private[faker] object ReflectUtils extends Logging {
     method.invoke(obj).asInstanceOf[T]
   }
 
+
+  private[this] val wrapperClassOf: Map[String, Class[_]] = Map(
+    "float" -> classOf[java.lang.Float],
+    "double" -> classOf[java.lang.Double],
+    "int" -> classOf[java.lang.Integer],
+    "long" -> classOf[java.lang.Long],
+    "short" -> classOf[java.lang.Short],
+    "boolean" -> classOf[java.lang.Boolean],
+    "char" -> classOf[java.lang.Character],
+    "byte" -> classOf[java.lang.Byte]
+  )
   /**
    * Get the boxed class for the given class. If the input class is primitive, then return the boxed class
    *
@@ -59,16 +71,10 @@ private[faker] object ReflectUtils extends Logging {
    * @return
    */
   def getClassOf(cls: Class[_]): Class[_] = {
-    cls.getName match {
-      case "float" => classOf[java.lang.Float]
-      case "double" => classOf[java.lang.Double]
-      case "int" => classOf[java.lang.Integer]
-      case "long" => classOf[java.lang.Long]
-      case "short" => classOf[java.lang.Short]
-      case "boolean" => classOf[java.lang.Boolean]
-      case "char" => classOf[java.lang.Character]
-      case "byte" => classOf[java.lang.Byte]
-      case _ => cls
+    if (cls.isPrimitive) {
+      wrapperClassOf(cls.getName)
+    } else {
+      cls
     }
   }
 
@@ -86,11 +92,12 @@ private[faker] object ReflectUtils extends Logging {
     invokeMethod[T](annotation.annotationType(), name, annotation)
   }
 
-  def provideArbitrary(outputType: Class[_], provider: CanProvide[_]): Either[String, Option[_]] = {
-
+  def provideArbitrary(outputType: Class[_], provider: Provider[_]): Either[String, Option[_]] = {
     if (outputType.equals(classOf[String]) && classOf[HasString].isAssignableFrom(provider.getClass)) {
+      trace("Provide arbitrary string value")
       Left(provider.asInstanceOf[HasString].provideString)
     } else if (outputType.equals(classOf[Option[_]]) && classOf[HasString].isAssignableFrom(provider.getClass)) {
+      trace("Provide arbitrary option value")
       Right(provider.asInstanceOf[HasOption[_]].provideOption)
     } else {
       throw new IllegalArgumentException(s"${provider.getClass.getSimpleName} cannot provide the type ${outputType.getSimpleName}")

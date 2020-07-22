@@ -1,6 +1,6 @@
 package dev.qinx.faker.annotation.geo;
 
-import dev.qinx.faker.internal.CanProvide;
+import dev.qinx.faker.provider.Provider;
 import dev.qinx.faker.provider.geo.CoordinatesProvider;
 
 import java.lang.annotation.ElementType;
@@ -15,5 +15,5 @@ public @interface Lon {
     double max() default 180D;
     String onLand() default "false";
     String seed() default "";
-    Class<? extends CanProvide> provider() default CoordinatesProvider.class;
+    Class<? extends Provider> provider() default CoordinatesProvider.class;
 }

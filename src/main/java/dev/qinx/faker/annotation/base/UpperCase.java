@@ -1,6 +1,6 @@
 package dev.qinx.faker.annotation.base;
 
-import dev.qinx.faker.internal.CanProvide;
+import dev.qinx.faker.provider.Provider;
 import dev.qinx.faker.provider.base.StringProvider;
 
 import java.lang.annotation.ElementType;
@@ -33,5 +33,5 @@ public @interface UpperCase {
 
     String seed() default "";
 
-    Class<? extends CanProvide> provider() default StringProvider.class;
+    Class<? extends Provider> provider() default StringProvider.class;
 }

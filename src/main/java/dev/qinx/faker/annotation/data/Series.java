@@ -1,6 +1,6 @@
 package dev.qinx.faker.annotation.data;
 
-import dev.qinx.faker.internal.CanProvide;
+import dev.qinx.faker.provider.Provider;
 import dev.qinx.faker.provider.data.SeriesProvider;
 
 import java.lang.annotation.ElementType;
@@ -16,5 +16,5 @@ public @interface Series {
     int length() default 3;
     String crossJoin() default "";
     String seed() default "";
-    Class<? extends CanProvide> provider() default SeriesProvider.class;
+    Class<? extends Provider> provider() default SeriesProvider.class;
 }

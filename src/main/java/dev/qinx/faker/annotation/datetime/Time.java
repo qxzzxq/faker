@@ -1,6 +1,6 @@
 package dev.qinx.faker.annotation.datetime;
 
-import dev.qinx.faker.internal.CanProvide;
+import dev.qinx.faker.provider.Provider;
 import dev.qinx.faker.provider.datetime.LocalTimeProvider;
 
 import java.lang.annotation.ElementType;
@@ -21,5 +21,5 @@ public @interface Time {
 
     String seed() default "";
 
-    Class<? extends CanProvide> provider() default LocalTimeProvider.class;
+    Class<? extends Provider> provider() default LocalTimeProvider.class;
 }

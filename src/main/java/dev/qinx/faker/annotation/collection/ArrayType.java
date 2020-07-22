@@ -1,6 +1,6 @@
 package dev.qinx.faker.annotation.collection;
 
-import dev.qinx.faker.internal.CanProvide;
+import dev.qinx.faker.provider.Provider;
 import dev.qinx.faker.provider.collection.ArrayProvider;
 
 import java.lang.annotation.ElementType;
@@ -22,5 +22,5 @@ public @interface ArrayType {
 
     String seed() default "";
 
-    Class<? extends CanProvide> provider() default ArrayProvider.class;
+    Class<? extends Provider> provider() default ArrayProvider.class;
 }

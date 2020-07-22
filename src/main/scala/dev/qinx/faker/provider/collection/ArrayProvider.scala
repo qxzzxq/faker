@@ -7,6 +7,8 @@ import dev.qinx.faker.internal.{HasComponent, HasSeed}
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.utils.ReflectUtils
 
+import scala.reflect.ClassTag
+
 /**
  * Array provider will provide an array.
  *
@@ -16,7 +18,7 @@ import dev.qinx.faker.utils.ReflectUtils
  *   p.provide().asInstanceOf[Array[String]]
  * }}}
  */
-class ArrayProvider extends Provider[Object] with HasComponent with HasSeed {
+class ArrayProvider extends Provider[Array[_]] with HasComponent with HasSeed {
 
   private[this] var length: Int = 3
   private[this] val componentProviderSeedUpdated: AtomicBoolean = new AtomicBoolean(false)
@@ -26,6 +28,13 @@ class ArrayProvider extends Provider[Object] with HasComponent with HasSeed {
     this
   }
 
+  override def canProvide(cls: Class[_]): Boolean = {
+    this.componentProvider.get.canProvide(cls.getComponentType)
+  }
+
+  override def getClassTag: ClassTag[Array[_]] = {
+    ClassTag(this.componentProvider.get.getClassTag.newArray(0).getClass)
+  }
 
   /**
    * Check if this array provider has seed. If true then try to update the seed of the component provider.
@@ -45,7 +54,7 @@ class ArrayProvider extends Provider[Object] with HasComponent with HasSeed {
     }
   }
 
-  override def provide(): Object = {
+  override def provide(): Array[_] = {
     require(componentType.isDefined, "The array type is not set, set it with setComponentType()")
     require(componentProvider.isDefined, "No component provider is set")
 
@@ -74,7 +83,7 @@ class ArrayProvider extends Provider[Object] with HasComponent with HasSeed {
         case e: Throwable => throw e
       }
     }
-    arr
+    arr.asInstanceOf[Array[_]]
   }
 
   override def configure(annotation: Annotation): ArrayProvider.this.type = {
