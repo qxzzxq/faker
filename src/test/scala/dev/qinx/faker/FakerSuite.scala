@@ -82,6 +82,8 @@ class FakerSuite extends AnyFunSuite {
 
     assert(Faker.provide[String](new MyProvider) === "haha")
     assert(Faker.provide[String](new MyProvider) === "haha")
+
+    assert(Faker.transport().airport().length === 3)
   }
 
 }

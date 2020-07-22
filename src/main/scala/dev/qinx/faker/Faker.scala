@@ -9,6 +9,7 @@ import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.provider.base.ClassProvider
 import dev.qinx.faker.provider.collection.ArrayProvider
 import dev.qinx.faker.provider.person.Person
+import dev.qinx.faker.provider.transport.Transport
 
 import scala.reflect.ClassTag
 
@@ -103,12 +104,13 @@ object Faker extends Logging {
    * @tparam T type of the output
    * @return an object of type T
    */
-  private[faker] def provide[T](id: String)(pf: String => Provider[T]): T = {
-    saveProviderIfNotExist[T](id, pf)
+  private[faker] def provide[T : ClassTag](id: String)(pf: String => Provider[_])(implicit tag: ClassTag[T]): T = {
+
+    saveProviderIfNotExist(id, pf)
     providers.get(id).provide().asInstanceOf[T]
   }
 
-  private[this] def saveProviderIfNotExist[T](id: String, pf: String => Provider[T]): Unit = synchronized {
+  private[this] def saveProviderIfNotExist(id: String, pf: String => Provider[_]): Unit = synchronized {
     if (!hasProvider(id)) {
       debug(s"Register provider $id")
       providers.put(id, pf(id))
@@ -120,7 +122,7 @@ object Faker extends Logging {
     this
   }
 
-  def provide[T](provider: Provider[T]): T = provide[T](provider.providerID)(_ => provider)
+  def provide[T: ClassTag](provider: Provider[T]): T = provide[T](provider.providerID)(_ => provider)
 
   def localDate(pattern: String = ""): LocalDate = {
     val providerID = s"${pattern}LocalDateProvider"
@@ -133,6 +135,8 @@ object Faker extends Logging {
   }
 
   def person(locale: Locale = Locale.en, seed: Option[Long] = None): Person = new Person(locale, seed)
+
+  def transport(seed: Option[Long] = None): Transport = new Transport(seed)
 
   def array[T](length: Int)(implicit classTag: ClassTag[T]): Array[T] = {
     val providerID = s"${classTag.runtimeClass.getCanonicalName}${length}ArrayProvider"

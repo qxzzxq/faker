@@ -3,18 +3,17 @@ package dev.qinx.faker.provider.transport
 import java.lang.annotation.Annotation
 
 import dev.qinx.faker.entity.Airport
-import dev.qinx.faker.internal.{HasRandom, HasResource, HasString}
+import dev.qinx.faker.internal.{HasRandom, HasResource}
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.utils.{CSVReader, Constants, ReflectUtils}
 
 import scala.collection.mutable.ArrayBuffer
 
-class AirportProvider extends Provider[Airport] with HasResource with HasRandom with HasString {
+class AirportProvider extends Provider[String] with HasResource with HasRandom {
 
   import AirportProvider._
 
   private[this] var country: Option[String] = None
-
   private[this] var airportTypes: Set[String] = Set(LARGE_AIRPORT, MEDIUM_AIRPORT)
 
   private[this] lazy val airportData: Array[Airport] = {
@@ -28,22 +27,20 @@ class AirportProvider extends Provider[Airport] with HasResource with HasRandom 
     }
   }
 
-  override def provideString: String = provide().iataCode
-
-  override def provide(): Airport = airportData(this.random.nextInt(airportData.length))
+  override def provide(): String = airportData(this.random.nextInt(airportData.length)).iataCode
 
   override def configure(annotation: Annotation): AirportProvider.this.type = {
 
-    val assertTrue: String => Boolean = { s =>
-      ReflectUtils.invokeAnnotationMethod[String](annotation, s) == "true"
+    val getBoolean: String => Boolean = { s =>
+      ReflectUtils.invokeAnnotationMethod[Boolean](annotation, s)
     }
 
     val apt: ArrayBuffer[String] = new ArrayBuffer[String]()
 
-    if (assertTrue("largeAirport")) apt += LARGE_AIRPORT
-    if (assertTrue("mediumAirport")) apt += MEDIUM_AIRPORT
-    if (assertTrue("smallAirport")) apt += SMALL_AIRPORT
-    if (assertTrue("heliport")) apt += HELIPORT
+    if (getBoolean("largeAirport")) apt += LARGE_AIRPORT
+    if (getBoolean("mediumAirport")) apt += MEDIUM_AIRPORT
+    if (getBoolean("smallAirport")) apt += SMALL_AIRPORT
+    if (getBoolean("heliport")) apt += HELIPORT
 
     ReflectUtils.invokeAnnotationMethod[String](annotation, "country") match {
       case "" =>

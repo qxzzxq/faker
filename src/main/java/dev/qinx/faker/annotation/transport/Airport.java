@@ -30,13 +30,13 @@ import java.lang.annotation.Target;
 public @interface Airport {
     String country() default "";
 
-    String largeAirport() default "true";
+    boolean largeAirport() default true;
 
-    String mediumAirport() default "false";
+    boolean mediumAirport() default false;
 
-    String smallAirport() default "false";
+    boolean smallAirport() default false;
 
-    String heliport() default "false";
+    boolean heliport() default false;
 
     String seed() default "";
 
