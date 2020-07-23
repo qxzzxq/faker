@@ -1,6 +1,6 @@
 package dev.qinx.faker.annotation.base;
 
-import dev.qinx.faker.internal.CanProvide;
+import dev.qinx.faker.provider.Provider;
 import dev.qinx.faker.provider.base.IntProvider;
 
 import java.lang.annotation.ElementType;
@@ -21,5 +21,5 @@ public @interface IntType {
     int min() default Integer.MIN_VALUE;
     int max() default Integer.MAX_VALUE;
     String seed() default "";
-    Class<? extends CanProvide> provider() default IntProvider.class;
+    Class<? extends Provider> provider() default IntProvider.class;
 }

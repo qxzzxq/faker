@@ -27,7 +27,7 @@ class DoubleProviderSuite extends AnyFunSuite {
 
   test("FloatProvider exception") {
     val faker = new Faker[TestDoubleProviderException]
-    assertThrows[NoSuchElementException](faker.get())
+    assertThrows[IllegalArgumentException](faker.get())
 
   }
 

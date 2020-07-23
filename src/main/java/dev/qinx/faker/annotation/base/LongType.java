@@ -1,6 +1,6 @@
 package dev.qinx.faker.annotation.base;
 
-import dev.qinx.faker.internal.CanProvide;
+import dev.qinx.faker.provider.Provider;
 import dev.qinx.faker.provider.base.LongProvider;
 
 import java.lang.annotation.ElementType;
@@ -24,5 +24,5 @@ public @interface LongType {
 
     String seed() default "";
 
-    Class<? extends CanProvide> provider() default LongProvider.class;
+    Class<? extends Provider> provider() default LongProvider.class;
 }

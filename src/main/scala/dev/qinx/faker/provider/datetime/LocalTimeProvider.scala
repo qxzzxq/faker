@@ -5,11 +5,11 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-import dev.qinx.faker.internal.{HasRandom, HasString, Logging}
+import dev.qinx.faker.internal.{HasOption, HasRandom, HasString, Logging}
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.utils.ReflectUtils
 
-class LocalTimeProvider() extends Provider[LocalTime] with HasRandom with HasString with Logging {
+class LocalTimeProvider() extends Provider[LocalTime] with HasRandom with HasString with HasOption[LocalTime] with Logging {
 
   private[this] var dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_TIME
   private[this] val minTime: LocalTime = LocalTime.MIN
@@ -36,6 +36,8 @@ class LocalTimeProvider() extends Provider[LocalTime] with HasRandom with HasStr
 
     this
   }
+
+  override def provideOption: Option[LocalTime] = Option(provide())
 
   override def provideString: String = provide().format(dateTimeFormatter)
 }

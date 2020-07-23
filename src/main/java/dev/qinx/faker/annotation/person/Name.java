@@ -2,7 +2,7 @@ package dev.qinx.faker.annotation.person;
 
 import dev.qinx.faker.enums.Gender;
 import dev.qinx.faker.enums.Locale;
-import dev.qinx.faker.internal.CanProvide;
+import dev.qinx.faker.provider.Provider;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -17,5 +17,5 @@ public @interface Name {
     String firstName() default "true";
     String lastName() default "true";
     String seed() default "";
-    Class<? extends CanProvide> provider() default dev.qinx.faker.provider.person.NameProvider.class;
+    Class<? extends Provider> provider() default dev.qinx.faker.provider.person.NameProvider.class;
 }

@@ -1,15 +1,14 @@
 package dev.qinx.faker.provider.datetime
 
 import java.lang.annotation.Annotation
-import java.time.{LocalDateTime, LocalTime}
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
-import dev.qinx.faker.internal.{HasRandom, HasString, Logging}
+import dev.qinx.faker.internal.{HasOption, HasRandom, HasString, Logging}
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.utils.ReflectUtils
 
-class LocalDateTimeProvider() extends Provider[LocalDateTime] with HasRandom with HasString with Logging {
+class LocalDateTimeProvider() extends Provider[LocalDateTime] with HasRandom with HasString with HasOption[LocalDateTime] with Logging {
 
   private[this] var dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME
   private[this] val dateProvider = new LocalDateProvider
@@ -47,6 +46,8 @@ class LocalDateTimeProvider() extends Provider[LocalDateTime] with HasRandom wit
 
     this
   }
+
+  override def provideOption: Option[LocalDateTime] = Option(provide())
 
   override def provideString: String = provide().format(dateTimeFormatter)
 }

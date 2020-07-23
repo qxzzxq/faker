@@ -1,10 +1,11 @@
 package dev.qinx.faker.internal
 
+import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.utils.DefaultProvider
 
 trait HasComponent extends Logging {
 
-  var componentProvider: Option[CanProvide[_]] = None
+  var componentProvider: Option[Provider[_]] = None
   var componentType: Option[Class[_]] = None
 
   /**
@@ -12,7 +13,7 @@ trait HasComponent extends Logging {
    * @param provider a provider that can provide the array component
    * @return
    */
-  def setComponentProvider(provider: CanProvide[_]): this.type = {
+  def setComponentProvider(provider: Provider[_]): this.type = {
     debug(s"Set component provider ${provider.getClass.getCanonicalName}")
     this.componentProvider = Option(provider)
     this

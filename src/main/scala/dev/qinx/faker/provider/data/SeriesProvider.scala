@@ -49,8 +49,6 @@ class SeriesProvider
   private[this] val counter: AtomicInteger = new AtomicInteger(0)
   private[this] val index: AtomicInteger = new AtomicInteger(0)
 
-  private[this] var _string: Option[String] = None
-  private[this] var _option: Option[Option[Object]] = None
   /**
    * length of data to be generated when only a component provider is given instead of data.
    * Will be override by setData()
@@ -64,42 +62,55 @@ class SeriesProvider
 
   private[this] val componentProviderSeedUpdated: AtomicBoolean = new AtomicBoolean(false)
 
+  override def canProvide(cls: Class[_]): Boolean = componentProvider.get.canProvide(cls)
 
   override def provide(): Object = {
-
     if (!this._dataInitialized) {
       this.initializeData()
     }
+    nextElement()
+  }
 
+  private[this] def nextElement(): Object = {
     require(this.data.length == this._dataLength, "The length of actual data does not match the defined value in @Series annotation")
-    val output = data(index.get())
-    this._string = Option(output.toString)
-    this._option = Option(Option(output.asInstanceOf[Object]))
-
     counter.getAndIncrement()
 
     if (counter.compareAndSet(rep, 0)) {
       index.getAndIncrement()
       index.compareAndSet(data.length, 0)
     }
-    output.asInstanceOf[Object]
+
+    data(index.get()).asInstanceOf[Object]
   }
 
 
-  private[this] def initializeData(): Unit = {
+  private[this] def initializeData(tpe: String = ""): Unit = {
     require(this.componentProvider.isDefined, "No component provider")
     require(!this._dataInitialized, "Data have already been set.")
 
-    //TODO fix faker.setSeed()
     this.updateSeedOfComponentProvider()
+    val set: mutable.LinkedHashSet[Any] = mutable.LinkedHashSet[Any]() // to remove duplicated data
 
     // initialize data
-    val set: mutable.LinkedHashSet[Any] = mutable.LinkedHashSet[Any]() // to remove duplicated data
-    while (set.size < this._dataLength) {
-      set.add(this.componentProvider.get.provide())
+    tpe match {
+      case "" =>
+        while (set.size < this._dataLength) {
+          set.add(this.componentProvider.get.provide())
+        }
+
+      case "string" =>
+        while (set.size < this._dataLength) {
+          set.add(this.componentProvider.get.asInstanceOf[HasString].provideString)
+        }
+
+      case "option" =>
+        while (set.size < this._dataLength) {
+          set.add(this.componentProvider.get.asInstanceOf[HasOption[_]].provideOption)
+        }
     }
 
     this.setData(set.toArray)
+
   }
 
   override def setComponentType(componentType: Class[_]): SeriesProvider.this.type = {
@@ -202,15 +213,17 @@ class SeriesProvider
   }
 
   override def provideString: String = {
-    this._string match {
-      case Some(s) => s
-      case _ => throw new NoSuchElementException("The method provide() should be invoked before provideString()")
+    if (!this._dataInitialized) {
+      this.initializeData("string")
     }
+    nextElement().asInstanceOf[String]
   }
 
-  override def provideOption: Option[Object] = this._option match {
-    case Some(o) => o
-    case _ => throw new NoSuchElementException("The method provide() should be invoked before provideOption()")
+  override def provideOption: Option[Object] = {
+    if (!this._dataInitialized) {
+      this.initializeData("option")
+    }
+    nextElement().asInstanceOf[Option[Object]]
   }
 
   /**
@@ -226,8 +239,6 @@ class SeriesProvider
       if (this.hasSeed && !p.hasSeed) {
         debug("Override component provider seed")
         p.setSeed(this.seed)
-      } else {
-        debug("Component provider already has a seed, do not override")
       }
     }
   }

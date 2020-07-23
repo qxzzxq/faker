@@ -1,6 +1,6 @@
 package dev.qinx.faker.annotation.transport;
 
-import dev.qinx.faker.internal.CanProvide;
+import dev.qinx.faker.provider.Provider;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,15 +30,15 @@ import java.lang.annotation.Target;
 public @interface Airport {
     String country() default "";
 
-    String largeAirport() default "true";
+    boolean largeAirport() default true;
 
-    String mediumAirport() default "false";
+    boolean mediumAirport() default false;
 
-    String smallAirport() default "false";
+    boolean smallAirport() default false;
 
-    String heliport() default "false";
+    boolean heliport() default false;
 
     String seed() default "";
 
-    Class<? extends CanProvide> provider() default dev.qinx.faker.provider.transport.AirportProvider.class;
+    Class<? extends Provider> provider() default dev.qinx.faker.provider.transport.AirportProvider.class;
 }

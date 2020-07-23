@@ -1,6 +1,6 @@
 package dev.qinx.faker.annotation.base;
 
-import dev.qinx.faker.internal.CanProvide;
+import dev.qinx.faker.provider.Provider;
 import dev.qinx.faker.provider.base.FloatProvider;
 
 import java.lang.annotation.ElementType;
@@ -21,5 +21,5 @@ public @interface FloatType {
     float min() default 0F;
     float max() default 1F;
     String seed() default "";
-    Class<? extends CanProvide> provider() default FloatProvider.class;
+    Class<? extends Provider> provider() default FloatProvider.class;
 }

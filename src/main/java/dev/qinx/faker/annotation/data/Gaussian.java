@@ -1,6 +1,6 @@
 package dev.qinx.faker.annotation.data;
 
-import dev.qinx.faker.internal.CanProvide;
+import dev.qinx.faker.provider.Provider;
 import dev.qinx.faker.provider.data.GaussianProvider;
 
 import java.lang.annotation.ElementType;
@@ -20,5 +20,5 @@ public @interface Gaussian {
     double std() default 1D;
     double mean() default 0D;
     String seed() default "";
-    Class<? extends CanProvide> provider() default GaussianProvider.class;
+    Class<? extends Provider> provider() default GaussianProvider.class;
 }

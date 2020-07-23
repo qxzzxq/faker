@@ -1,7 +1,7 @@
 package dev.qinx.faker.annotation.company;
 
 import dev.qinx.faker.enums.Locale;
-import dev.qinx.faker.internal.CanProvide;
+import dev.qinx.faker.provider.Provider;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -21,5 +21,5 @@ public @interface Company {
     boolean real() default true;
     Locale locale() default Locale.en;
     String seed() default "";
-    Class<? extends CanProvide> provider() default dev.qinx.faker.provider.company.CompanyProvider.class;
+    Class<? extends Provider> provider() default dev.qinx.faker.provider.company.CompanyProvider.class;
 }
