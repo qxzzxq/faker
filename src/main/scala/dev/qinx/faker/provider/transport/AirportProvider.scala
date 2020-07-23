@@ -27,6 +27,11 @@ class AirportProvider extends Provider[String] with HasResource with HasRandom {
     }
   }
 
+  def setCountry(country: Option[String]): this.type = {
+    this.country = country
+    this
+  }
+
   override def provide(): String = airportData(this.random.nextInt(airportData.length)).iataCode
 
   override def configure(annotation: Annotation): AirportProvider.this.type = {
@@ -44,7 +49,7 @@ class AirportProvider extends Provider[String] with HasResource with HasRandom {
 
     ReflectUtils.invokeAnnotationMethod[String](annotation, "country") match {
       case "" =>
-      case country => this.country = Option(country)
+      case country => setCountry(Option(country))
     }
 
     this.airportTypes = apt.toSet

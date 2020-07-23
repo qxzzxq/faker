@@ -8,6 +8,7 @@ import dev.qinx.faker.internal.{HasSeed, Logging}
 import dev.qinx.faker.provider.Provider
 import dev.qinx.faker.provider.base.ClassProvider
 import dev.qinx.faker.provider.collection.ArrayProvider
+import dev.qinx.faker.provider.datetime.Datetime
 import dev.qinx.faker.provider.person.Person
 import dev.qinx.faker.provider.transport.Transport
 
@@ -112,7 +113,7 @@ object Faker extends Logging {
 
   private[this] def saveProviderIfNotExist(id: String, pf: String => Provider[_]): Unit = synchronized {
     if (!hasProvider(id)) {
-      debug(s"Register provider $id")
+      trace(s"Register provider $id")
       providers.put(id, pf(id))
     }
   }
@@ -137,6 +138,8 @@ object Faker extends Logging {
   def person(locale: Locale = Locale.en, seed: Option[Long] = None): Person = new Person(locale, seed)
 
   def transport(seed: Option[Long] = None): Transport = new Transport(seed)
+
+  def datetime(seed: Option[Long] = None): Datetime = new Datetime(seed)
 
   def array[T](length: Int)(implicit classTag: ClassTag[T]): Array[T] = {
     val providerID = s"${classTag.runtimeClass.getCanonicalName}${length}ArrayProvider"
